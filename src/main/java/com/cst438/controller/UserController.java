@@ -43,9 +43,12 @@ public class UserController {
         User user = new User();
         user.setName(userDTO.name());
         user.setEmail(userDTO.email());
+
+        // create password and encrypt it
         String password = userDTO.name()+"2024";
         String enc_password = encoder.encode(password);
         user.setPassword(enc_password);
+
         user.setType(userDTO.type());
         if (!userDTO.type().equals("STUDENT") &&
                 !userDTO.type().equals("INSTRUCTOR") &&

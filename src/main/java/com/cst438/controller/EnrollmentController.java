@@ -15,7 +15,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class EnrollmentController {
 
-    // instructor downloads student enrollments and grades for a section, ordered by student name
+    // instructor downloads student enrollments for a section, ordered by student name
     // user must be instructor for the section
     @GetMapping("/sections/{sectionNo}/enrollments")
     public List<EnrollmentDTO> getEnrollments(
@@ -26,12 +26,16 @@ public class EnrollmentController {
         return null;
     }
 
-    // instructor uploads  final grades for the section
+    // instructor uploads enrollments with the final grades for the section
     // user must be instructor for the section
     @PutMapping("/enrollments")
     public void updateEnrollmentGrade(@RequestBody List<EnrollmentDTO> dlist) {
 
         // TODO
+
+        // For each EnrollmentDTO in the list
+        //  find the Enrollment entity using enrollmentId
+        //  update the grade and save back to database
 
     }
 

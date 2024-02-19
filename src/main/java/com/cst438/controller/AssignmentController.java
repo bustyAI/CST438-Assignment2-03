@@ -71,6 +71,11 @@ public class AssignmentController {
 
         // TODO remove the following line when done
 
+        // get the list of enrollments for the section related to this assignment.
+        // for each enrollment, get the grade related to the assignment and enrollment
+        //   if the grade does not exist, create a grade entity and set the score to NULL
+        //   and then save the new entity
+
         return null;
     }
 
@@ -80,6 +85,9 @@ public class AssignmentController {
     public void updateGrades(@RequestBody List<GradeDTO> dlist) {
 
         // TODO
+
+        // for each grade in the GradeDTO list, retrieve the grade entity
+        // update the score and save the entity
 
     }
 
@@ -94,6 +102,9 @@ public class AssignmentController {
             @RequestParam("semester") String semester) {
 
         // TODO remove the following line when done
+
+        // return a list of assignments and (if they exist) the assignment grade
+        //  for all sections that the student is enrolled for the given year and semester
 
         return null;
     }

@@ -11,6 +11,9 @@ public record EnrollmentDTO(
         String courseId,
         int sectionId,
         int sectionNo,
+        String building,
+        String room,
+        String times,
         int credits,
         int year,
         String semester
