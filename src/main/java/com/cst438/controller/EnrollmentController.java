@@ -1,7 +1,6 @@
 package com.cst438.controller;
 
-import com.cst438.domain.Enrollment;
-import com.cst438.domain.EnrollmentRepository;
+
 import com.cst438.dto.EnrollmentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
