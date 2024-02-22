@@ -1,10 +1,9 @@
 package com.cst438.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 public class Term {
@@ -25,6 +24,9 @@ public class Term {
     private Date startDate;
     @Column(name="end_date")
     private Date endDate;
+    @OneToMany(mappedBy="term")
+    List<Section> sections;
+
 
     public int getTermId() {
         return termId;
@@ -89,4 +91,6 @@ public class Term {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
+
+    public List<Section> getSections() { return sections;}
 }
