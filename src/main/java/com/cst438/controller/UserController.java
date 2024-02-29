@@ -82,10 +82,10 @@ public class UserController {
     @DeleteMapping("/users/{id}")
     public void  updateUser(@PathVariable("id") int id) {
         User user = userRepository.findById(id).orElse(null);
-        if (user==null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user id not found");
+        if (user!=null) {
+            userRepository.delete(user);
         }
-        userRepository.delete(user);
+
     }
 
 }

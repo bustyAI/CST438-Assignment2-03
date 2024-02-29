@@ -29,6 +29,10 @@ public class AssignmentController {
             @PathVariable("secNo") int secNo) {
 
         // TODO remove the following line when done
+		
+		// hint: use the assignment repository method 
+		//  findBySectionNoOrderByDueDate to return 
+		//  a list of assignments
 
         return null;
     }
@@ -66,13 +70,15 @@ public class AssignmentController {
 
     // instructor gets grades for assignment ordered by student name
     // user must be instructor for the section
-    @GetMapping("/assignment/{assignmentId}/grades")
+    @GetMapping("/assignments/{assignmentId}/grades")
     public List<GradeDTO> getAssignmentGrades(@PathVariable("assignmentId") int assignmentId) {
 
         // TODO remove the following line when done
 
         // get the list of enrollments for the section related to this assignment.
+		// hint: use te enrollment repository method findEnrollmentsBySectionOrderByStudentName.
         // for each enrollment, get the grade related to the assignment and enrollment
+		//   hint: use the gradeRepository findByEnrollmentIdAndAssignmentId method.
         //   if the grade does not exist, create a grade entity and set the score to NULL
         //   and then save the new entity
 
@@ -105,6 +111,7 @@ public class AssignmentController {
 
         // return a list of assignments and (if they exist) the assignment grade
         //  for all sections that the student is enrolled for the given year and semester
+		//  hint: use the assignment repository method findByStudentIdAndYearAndSemesterOrderByDueDate
 
         return null;
     }

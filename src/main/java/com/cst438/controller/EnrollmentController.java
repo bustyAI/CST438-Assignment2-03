@@ -20,8 +20,9 @@ public class EnrollmentController {
     public List<EnrollmentDTO> getEnrollments(
             @PathVariable("sectionNo") int sectionNo ) {
 
-        // TODO remove the following line when done
-
+        // TODO
+		//  hint: use enrollment repository findEnrollmentsBySectionNoOrderByStudentName method
+        //  remove the following line when done
         return null;
     }
 

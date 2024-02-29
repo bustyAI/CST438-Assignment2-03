@@ -111,32 +111,11 @@ public class SectionController {
         }
     }
 
-//    @GetMapping("/sections/{sectionno}")
-//    public SectionDTO getSection(@PathVariable int sectionno) {
-//
-//
-//        Section s = sectionRepository.findById(sectionno).orElse(null);
-//        if (s==null) {
-//            throw  new ResponseStatusException( HttpStatus.NOT_FOUND, "section not found");
-//        }
-//        User instructor = userRepository.findByEmail(s.getInstructorEmail());
-//
-//        return new SectionDTO(
-//                s.getSectionNo(),
-//                s.getTerm().getYear(),
-//                s.getTerm().getSemester(),
-//                s.getCourse().getCourseId(),
-//                s.getSecId(),
-//                s.getBuilding(),
-//                s.getRoom(),
-//                s.getTimes(),
-//                (instructor!=null) ? instructor.getName() : "",
-//                (instructor!=null) ? instructor.getEmail() : ""
-//        );
-//    }
 
-    // get Sections with query parms courseId, year, semester
-    @GetMapping("/course/{courseId}/sections")
+    // get Sections for a course with request params year, semester
+    // example URL   /course/cst363/sections?year=2024&semester=Spring
+    // also specify partial courseId   /course/cst/sections?year=2024&semester=Spring
+    @GetMapping("/courses/{courseId}/sections")
     public List<SectionDTO> getSections(
             @PathVariable("courseId") String courseId,
             @RequestParam("year") int year ,
@@ -169,6 +148,7 @@ public class SectionController {
     }
 
     // get Sections for an instructor
+    // example URL  /sections?instructorEmail=dwisneski@csumb.edu&year=2024&semester=Spring
     @GetMapping("/sections")
     public List<SectionDTO> getSectionsForInstructor(
             @RequestParam("email") String instructorEmail,
@@ -198,5 +178,29 @@ public class SectionController {
             ));
         }
         return dto_list;
+    }
+	
+    @GetMapping("/sections/open")
+    public List<SectionDTO> getOpenSectionsForEnrollment() {
+
+        List<Section> sections = sectionRepository.findByOpenOrderByCourseIdSectionId();
+
+        List<SectionDTO> dlist = new ArrayList<>();
+        for (Section s : sections) {
+            User instructor = userRepository.findByEmail(s.getInstructorEmail());
+            dlist.add( new SectionDTO(
+                    s.getSectionNo(),
+                    s.getTerm().getYear(),
+                    s.getTerm().getSemester(),
+                    s.getCourse().getCourseId(),
+                    s.getSecId(),
+                    s.getBuilding(),
+                    s.getRoom(),
+                    s.getTimes(),
+                    (instructor!=null) ? instructor.getName() : "",
+                    (instructor!=null) ? instructor.getEmail() : ""
+            ));
+        }
+        return dlist;
     }
 }
