@@ -11,7 +11,7 @@ public class Assignment {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="assignment_id")
     private int assignmentId;
- 
+    // test
     // TODO  complete this class
     // add additional attributes for title, dueDate
     // add relationship between assignment and section entities
