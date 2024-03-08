@@ -8,10 +8,45 @@ public class Grade {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="grade_id")
     private int gradeId;
- 
-    // TODO complete this class
-    // add additional attribute for score
-    // add relationship between grade and assignment entities
-    // add relationship between grade and enrollment entities
-    // add getter/setter methods
+
+    private Integer assignmentScore;
+
+    @ManyToOne
+    @JoinColumn(name = "assignment_id")
+    private Grade grade;
+    @ManyToOne
+    @JoinColumn(name = "enrollment_id", nullable = false)
+    private Enrollment enrollment;
+
+    public int getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(int gradeId) {
+        this.gradeId = gradeId;
+    }
+
+    public Integer getAssignmentScore() {
+        return assignmentScore;
+    }
+
+    public void setAssignmentScore(Integer assignmentScore) {
+        this.assignmentScore = assignmentScore;
+    }
+
+    public Grade getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Grade grade) {
+        this.grade = grade;
+    }
+
+    public Enrollment getEnrollment() {
+        return enrollment;
+    }
+
+    public void setEnrollment(Enrollment enrollment) {
+        this.enrollment = enrollment;
+    }
 }
