@@ -13,7 +13,8 @@ public class Grade {
 
     @ManyToOne
     @JoinColumn(name = "assignment_id")
-    private Grade grade;
+    private Assignment assignment;
+
     @ManyToOne
     @JoinColumn(name = "enrollment_id", nullable = false)
     private Enrollment enrollment;
@@ -34,12 +35,12 @@ public class Grade {
         this.assignmentScore = assignmentScore;
     }
 
-    public Grade getGrade() {
-        return grade;
+    public Assignment getAssignment() {
+        return assignment;
     }
 
-    public void setGrade(Grade grade) {
-        this.grade = grade;
+    public void setAssignment(Assignment assignment) {
+        this.assignment = assignment;
     }
 
     public Enrollment getEnrollment() {

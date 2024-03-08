@@ -13,16 +13,16 @@ public class Enrollment {
 
     private String finalGrade;
 
-    @OneToMany(mappedBy = "enrollment")
-    List<Grade> finalGrades;
-
     @ManyToOne
     @JoinColumn(name = "section_no", nullable = false)
     private Section section;
 
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
-    private User student;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    @OneToMany(mappedBy = "enrollment")
+    List<Grade> finalGrades;
+
 
     public int getEnrollmentId() {
         return enrollmentId;
@@ -48,12 +48,12 @@ public class Enrollment {
         this.finalGrades = finalGrades;
     }
 
-    public User getStudent() {
-        return student;
+    public User getUser() {
+        return user;
     }
 
-    public void setStudent(User student) {
-        this.student = student;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Section getSection() {
