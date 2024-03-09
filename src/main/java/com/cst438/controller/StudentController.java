@@ -35,7 +35,7 @@ public class StudentController {
     // student gets transcript showing list of all enrollments
     // studentId will be temporary until Login security is implemented
     // example URL /transcript?studentId=19803
-    @GetMapping("/transcripts")
+    @GetMapping("/transcript")
     public List<EnrollmentDTO> getTranscript(@RequestParam("studentId") int studentId) {
         // TODO
         // list course_id, sec_id, title, credit, grade in chronological order
@@ -49,13 +49,14 @@ public class StudentController {
         }
         List<EnrollmentDTO> elist = new ArrayList<>();
         for (Enrollment enrollment : enrollments) {
-            Enrollment grade = null;
-            if (enrollment.getFinalGrade() !=null) {
-                grade = enrollmentRepository.(enrollment.getFinalGrade());
-            }
+            // not sure what this part covered but it threw an error and works without it
+            // Enrollment grade = null;
+            // if (enrollment.getGrade() !=null) {
+            //     grade = enrollmentRepository.(enrollment.getGrade());
+            // }
             elist.add(new EnrollmentDTO(
                     enrollment.getEnrollmentId(),
-                    enrollment.getFinalGrade(),
+                    enrollment.getGrade(),
                     enrollment.getUser().getId(),
                     enrollment.getUser().getName(),
                     enrollment.getUser().getEmail(),
@@ -94,7 +95,7 @@ public class StudentController {
         for (Enrollment enrollment : enrollments) {
             elist.add(new EnrollmentDTO(
                     enrollment.getEnrollmentId(),
-                    enrollment.getFinalGrade(),
+                    enrollment.getGrade(),
                     enrollment.getUser().getId(),
                     enrollment.getUser().getName(),
                     enrollment.getUser().getEmail(),
@@ -149,13 +150,14 @@ public class StudentController {
         }
 
         Enrollment enrollment = new Enrollment();
-        enrollment.setFinalGrade(null);
+        enrollment.setGrade(null);
+        enrollment.setUser(student);
         enrollment.setSection(section);
 
-        Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
+        enrollmentRepository.save(enrollment);
 
         return new EnrollmentDTO(
-                savedEnrollment.getEnrollmentId(),
+                enrollment.getEnrollmentId(),
                 null,
                 studentId,
                 student.getName(),
@@ -179,8 +181,11 @@ public class StudentController {
         // TODO
         // check that today is not after the dropDeadline for section
 
+        // previous method of fetching enrollment
         Enrollment e = enrollmentRepository.findById(enrollmentId).orElse(null);
-        if (e != null && e.getUser().getType() == "student") {
+        //Enrollment e = enrollmentRepository.findEnrollmentByEnrollmentId(enrollmentId);
+
+        if (e != null) {
             LocalDate localDate = LocalDate.now();
             Date today = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
             Date dropDeadline = e.getSection().getTerm().getDropDeadline();
@@ -189,6 +194,8 @@ public class StudentController {
             } else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "drop deadline has passed");
             }
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "enrollment not found");
         }
     }
 }

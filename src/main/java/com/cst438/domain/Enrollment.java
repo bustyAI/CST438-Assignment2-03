@@ -11,7 +11,7 @@ public class Enrollment {
     @Column(name="enrollment_id")
     int enrollmentId;
 
-    private String finalGrade;
+    private String grade;
 
     @ManyToOne
     @JoinColumn(name = "section_no", nullable = false)
@@ -21,7 +21,7 @@ public class Enrollment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @OneToMany(mappedBy = "enrollment")
-    List<Grade> finalGrades;
+    List<Grade> grades;
 
 
     public int getEnrollmentId() {
@@ -32,20 +32,20 @@ public class Enrollment {
         this.enrollmentId = enrollmentId;
     }
 
-    public String getFinalGrade() {
-        return finalGrade;
+    public String getGrade() {
+        return grade;
     }
 
-    public void setFinalGrade(String finalGrade) {
-        this.finalGrade = finalGrade;
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 
-    public List<Grade> getFinalGrades() {
-        return finalGrades;
+    public List<Grade> getGrades() {
+        return grades;
     }
 
-    public void setFinalGrades(List<Grade> finalGrades) {
-        this.finalGrades = finalGrades;
+    public void setGrades(List<Grade> grades) {
+        this.grades = grades;
     }
 
     public User getUser() {

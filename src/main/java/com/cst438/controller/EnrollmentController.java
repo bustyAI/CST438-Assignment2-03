@@ -32,15 +32,20 @@ public class EnrollmentController {
     public List<EnrollmentDTO> getEnrollments( @PathVariable("sectionNo") int sectionNo ) {
 
         List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsBySectionNoOrderByStudentName(sectionNo);
-        List<EnrollmentDTO> dto_list = new ArrayList<>();
-        for (Enrollment e : enrollments) {
-            dto_list.add(new EnrollmentDTO(e.getEnrollmentId(), e.getFinalGrade(), e.getUser().getId(),
-            e.getUser().getName(), e.getUser().getEmail(), e.getSection().getCourse().getCourseId(),
-            e.getSection().getSecId(), e.getSection().getSectionNo(), e.getSection().getBuilding(), 
-            e.getSection().getRoom(), e.getSection().getTimes(), e.getSection().getCourse().getCredits(), 
-            e.getSection().getTerm().getYear(), e.getSection().getTerm().getSemester()));
+        if (enrollments.size() < 1){
+            throw  new ResponseStatusException( HttpStatus.NOT_FOUND, "section not found ( " + sectionNo );
+        } else{
+            List<EnrollmentDTO> dto_list = new ArrayList<>();
+            for (Enrollment e : enrollments) {
+                dto_list.add(new EnrollmentDTO(e.getEnrollmentId(), e.getGrade(), e.getUser().getId(),
+                e.getUser().getName(), e.getUser().getEmail(), e.getSection().getCourse().getCourseId(),
+                e.getSection().getSecId(), e.getSection().getSectionNo(), e.getSection().getBuilding(), 
+                e.getSection().getRoom(), e.getSection().getTimes(), e.getSection().getCourse().getCredits(), 
+                e.getSection().getTerm().getYear(), e.getSection().getTerm().getSemester()));
+            }
+            return dto_list;
         }
-        return dto_list;
+        
     }
 
     // instructor uploads enrollments with the final grades for the section
@@ -54,7 +59,7 @@ public class EnrollmentController {
             } else {
                 Enrollment enrollment = 
                 enrollmentRepository.findEnrollmentBySectionNoAndStudentId(e.sectionNo(), e.studentId());
-                enrollment.setFinalGrade(e.grade());
+                enrollment.setGrade(e.grade());
                 enrollmentRepository.save(enrollment);
             }
             counter++;
