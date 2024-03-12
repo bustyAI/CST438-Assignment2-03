@@ -9,7 +9,7 @@ public class Grade {
     @Column(name="grade_id")
     private int gradeId;
 
-    private Integer assignmentScore;
+    private Integer score;
 
     @ManyToOne
     @JoinColumn(name = "assignment_id")
@@ -27,12 +27,12 @@ public class Grade {
         this.gradeId = gradeId;
     }
 
-    public Integer getAssignmentScore() {
-        return assignmentScore;
+    public Integer getScore() {
+        return score;
     }
 
-    public void setAssignmentScore(Integer assignmentScore) {
-        this.assignmentScore = assignmentScore;
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
     public Assignment getAssignment() {

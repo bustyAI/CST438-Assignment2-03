@@ -17,7 +17,7 @@ public class Assignment {
     private Date dueDate;
 
     @ManyToOne
-    @JoinColumn(name = "section_id", nullable = false)
+    @JoinColumn(name = "section_no", nullable = false)
     private Section section;
     @OneToMany(mappedBy = "assignment")
     List<Grade> grades;

@@ -10,6 +10,7 @@ public interface EnrollmentRepository extends CrudRepository<Enrollment, Integer
    @Query("select e from Enrollment e where e.section.sectionNo=:sectionNo order by e.user.name")
    List<Enrollment> findEnrollmentsBySectionNoOrderByStudentName(int sectionNo);
 
+
    @Query("select e from Enrollment e where e.user.id=:userId order by e.section.term.termId")
    List<Enrollment> findEnrollmentsByStudentIdOrderByTermId(int userId);
 
@@ -18,4 +19,5 @@ public interface EnrollmentRepository extends CrudRepository<Enrollment, Integer
 
    @Query("select e from Enrollment e where e.section.sectionNo=:sectionNo and e.user.id=:userId")
    Enrollment findEnrollmentBySectionNoAndStudentId(int sectionNo, int userId);
+
 }
