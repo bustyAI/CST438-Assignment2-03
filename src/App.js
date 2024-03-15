@@ -4,8 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import UsersView from './components/admin/UsersView';
 import CoursesView from './components/admin/CoursesView';
 import SectionsView from './components/admin/SectionsView';
-import {AdminHome, AdminLayout} from './components/admin/AdminLayout';
-import {StudentLayout, StudentHome} from './components/student/StudentLayout';
+import { AdminHome, AdminLayout } from './components/admin/AdminLayout';
+import { StudentLayout, StudentHome } from './components/student/StudentLayout';
 import ScheduleView from './components/student/ScheduleView';
 import Transcript from './components/student/Transcript';
 import StudentAssignmentsView from './components/student/AssignmentsStudentView';
@@ -23,10 +23,10 @@ function App() {
 
   const userType = 'INSTRUCTOR'; // change to INSTRUCTOR or STUDENT for testing.  
 
-  if (userType==='ADMIN') {
+  if (userType === 'ADMIN') {
     return (
       <div className="App">
-      <BrowserRouter>
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<AdminLayout />}>
               <Route index element={<AdminHome />} />
@@ -38,10 +38,10 @@ function App() {
         </BrowserRouter>
       </div>
     )
-  } else if (userType==='STUDENT') {
+  } else if (userType === 'STUDENT') {
     return (
       <div className="App">
-      <BrowserRouter>
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<StudentLayout />}>
               <Route index element={<StudentHome />} />
@@ -53,10 +53,10 @@ function App() {
         </BrowserRouter>
       </div>
     )
-  } else if (userType==='INSTRUCTOR') {
+  } else if (userType === 'INSTRUCTOR') {
     return (
       <div className="App">
-      <BrowserRouter>
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<InstructorLayout />}>
               <Route index element={<InstructorHome />} />

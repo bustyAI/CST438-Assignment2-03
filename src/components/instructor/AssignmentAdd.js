@@ -36,8 +36,8 @@ const AssignmentAdd = (props) => {
     }
 
     const onSave = async () => {
-        if (assignment.id==='' || assignment.title==='' || assignment.dueDate==='' || assignment.courseId==='' 
-        || assignment.secId==='' || assignment.secNo==='') {
+        if (assignment.id === '' || assignment.title === '' || assignment.dueDate === '' || assignment.courseId === ''
+            || assignment.secId === '' || assignment.secNo === '') {
             setEditMessage('Must enter data for id, title, dudDate, courseId, secId, and secNo');
         } else {
             addAssignment(assignment);
@@ -62,7 +62,7 @@ const AssignmentAdd = (props) => {
         } catch (err) {
             setEditMessage("Network error: " + err);
         }
-      }
+    }
     return (
         <div>
             <Button id="addAssignment" onClick={editOpen}>Add Assignment</Button>

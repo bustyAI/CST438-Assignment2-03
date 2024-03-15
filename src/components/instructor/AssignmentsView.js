@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {useLocation} from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom'
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import AssignmentUpdate from './AssignmentUpdate';
@@ -16,7 +16,7 @@ import { SERVER_URL } from '../../Constants';
 // assignment id, title, dueDate and buttons to grade, edit, delete each assignment
 
 function AssignmentsView(props) {
-    const headers = ['Assignment ID', 'Title', 'Due Date', 'Section No', '', ''];
+    const headers = ['Assignment ID', 'Title', 'Due Date', 'Course Id', 'Section Id', 'Section No'];
 
     const [assignments, setAssignments] = useState([]);
     const [message, setMessage] = useState('');
@@ -52,7 +52,7 @@ function AssignmentsView(props) {
             });
             if (response.ok) {
                 setMessage("Assignment saved");
-                fetchAssignments();
+                fetchAssignments("8"); // 8 is used for testing funcitonaliy
             } else {
                 const json = await response.json();
                 setMessage("Response error: " + json.message);
@@ -140,7 +140,7 @@ function AssignmentsView(props) {
                             <td>{a.courseId}</td>
                             <td>{a.secId}</td>
                             <td>{a.secNo}</td>
-                            <td><AssignmentUpdate assignment={a} onClose={fetchAssignments} /></td>
+                            <td><AssignmentUpdate assignment={a} onClose={fetchAssignments} save={saveAssignment} /></td>
                             <td><Button onClick={onDelete}>Delete</Button></td>
                         </tr>
                     ))}
