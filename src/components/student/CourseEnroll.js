@@ -38,12 +38,10 @@ const CourseEnroll = (props) => {
             return;
         }
 
-        // Not sure what's wrong here?
-        // Getting a CORS error, can't figure out why. Checked StudentController and I think it's fine?
+        // studentId=3 will be removed in assignment 7
         try {
             const response = await fetch(
-                `${SERVER_URL}/enrollments/sections?sectionNo=${selectedSection.secNo
-                }&studentId=${3}`,
+                `${SERVER_URL}/enrollments/sections/${selectedSection.secNo}?studentId=${3}`,
                 {
                     method: "POST",
                     headers: {
