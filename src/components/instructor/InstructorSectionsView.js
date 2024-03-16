@@ -1,4 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import {SERVER_URL} from '../../Constants';
 
 // instructor views a list of sections they are teaching 
 // use the URL /sections?email=dwisneski@csumb.edu&year= &semester=
@@ -11,15 +14,67 @@ import React, {useState, useEffect} from 'react';
 // <Link to="/assignments" state={section}>View Assignments</Link>
 
 const InstructorSectionsView = (props) => {
-
+    const headers = ['Sec No', 'Year', 'Semester', 'Course Id', 'Sec Id', 'Building', 'Room', 'Times', 
+                        'Instructor', 'Instructor Email'];
+    const [sections, setSections] = useState([]);
     
-     
-    return(
-        <> 
-           <h3>Not implemented</h3>
+    const location = useLocation();
+    const term = location.state;
+
+
+    const fetchSections = async () => {
+        try {
+            const response = await fetch(`${SERVER_URL}/sections?email=dwisneski@csumb.edu&year=${parseInt(term.year)}&semester=${term.semester}`);
+            if (response.ok) {
+                const sections = await response.json();
+                setSections(sections);
+            } else {
+                console.error('Failed to fetch sections');
+            }
+        } catch (error) {
+            console.error('Error fetching sections:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSections();
+    }, []);
+
+    return (
+        <>
+            <h3>Instructor Sections</h3>
+            <table className="Center">
+            <thead>
+                    <tr>
+                        {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {sections.map(section => (
+                        <tr key={section.secNo}>
+                            <td>{section.secNo}</td>
+                            <td>{section.year}</td>
+                            <td>{section.semester}</td>
+                            <td>{section.courseId}</td>
+                            <td>{section.secId}</td>
+                            <td>{section.building}</td>
+                            <td>{section.room}</td>
+                            <td>{section.times}</td>
+                            <td>{section.instructorName}</td>
+                            <td>{section.instructorEmail}</td>
+                            <td>
+                                <Link to={{ pathname: "/enrollments", state: { section } }}>View Enrollments</Link>
+                            </td>
+                            <td>
+                                <Link to='/assignments' state={section.secNo}>View Assignments</Link>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </>
     );
-}
+};
 
 export default InstructorSectionsView;
 

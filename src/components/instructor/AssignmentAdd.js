@@ -36,9 +36,8 @@ const AssignmentAdd = (props) => {
     }
 
     const onSave = async () => {
-        if (assignment.id === '' || assignment.title === '' || assignment.dueDate === '' || assignment.courseId === ''
-            || assignment.secId === '' || assignment.secNo === '') {
-            setEditMessage('Must enter data for id, title, dudDate, courseId, secId, and secNo');
+        if (assignment.title === '' || assignment.dueDate === '' || assignment.secNo === '') {
+            setEditMessage('Must enter data for title, dudDate, and secNo');
         } else {
             addAssignment(assignment);
         }
@@ -70,11 +69,8 @@ const AssignmentAdd = (props) => {
                 <DialogTitle>Add Assignment</DialogTitle>
                 <DialogContent style={{ paddingTop: 20 }}>
                     <h4 id="addMessage">{editMessage}</h4>
-                    <TextField style={{ padding: 10 }} fullWidth label="Assignment ID" name="id" value={assignment.id} onChange={editChange} />
                     <TextField style={{ padding: 10 }} fullWidth label="Title" name="title" value={assignment.title.toString()} onChange={editChange} />
                     <TextField style={{ padding: 10 }} fullWidth type="date" label="Due Date" name="dueDate" value={assignment.dueDate} onChange={editChange} />
-                    <TextField style={{ padding: 10 }} fullWidth label="CourseId" name="courseId" value={assignment.courseId.toString()} onChange={editChange} />
-                    <TextField style={{ padding: 10 }} fullWidth label="Section Id" name="secId" value={assignment.secId} onChange={editChange} />
                     <TextField style={{ padding: 10 }} fullWidth label="Section No" name="secNo" value={assignment.secNo} onChange={editChange} />
                 </DialogContent>
                 <DialogActions>

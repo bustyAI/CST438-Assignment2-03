@@ -55,12 +55,8 @@ const AssignmentUpdate = (props) => {
         <DialogTitle>Edit Assignment</DialogTitle>
         <DialogContent style={{ paddingTop: 20 }}>
           <h4>{editMessage}</h4>
-          <TextField style={{ padding: 10 }} autoFocus fullWidth label="id" name='id' value={assignment.id} InputProps={{ readOnly: true }} />
           <TextField style={{ padding: 10 }} fullWidth label='title' name='title' value={assignment.title} onChange={editChange} />
           <TextField style={{ padding: 10 }} fullWidth type='date' name='dueDate' value={assignment.dueDate} onChange={editChange} />
-          <TextField style={{ padding: 10 }} fullWidth label='courseId' name='courseId' value={assignment.courseId} onChange={editChange} />
-          <TextField style={{ padding: 10 }} fullWidth label='secId' name='secId' value={assignment.secId} onChange={editChange} />
-          <TextField style={{ padding: 10 }} fullWidth label='secNo' name='secNo' value={assignment.secNo} onChange={editChange} />
         </DialogContent>
         <DialogActions>
           <Button color='secondary' onClick={editClose}>Close</Button>

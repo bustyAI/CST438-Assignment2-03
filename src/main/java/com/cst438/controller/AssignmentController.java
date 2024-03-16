@@ -67,7 +67,7 @@ public class AssignmentController {
     @PostMapping("/assignments")
     public AssignmentDTO createAssignment(
             @RequestBody AssignmentDTO dto) {
-        Section section = sectionRepository.findById(dto.secId()).orElse(null);
+        Section section = sectionRepository.findById(dto.secNo()).orElse(null);
 
         if (section == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "section not found: " + dto.secId());
