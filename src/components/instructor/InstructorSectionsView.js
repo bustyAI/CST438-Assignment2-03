@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import {SERVER_URL} from '../../Constants';
+import { SERVER_URL } from '../../Constants';
 
 // instructor views a list of sections they are teaching 
 // use the URL /sections?email=dwisneski@csumb.edu&year= &semester=
@@ -14,10 +14,10 @@ import {SERVER_URL} from '../../Constants';
 // <Link to="/assignments" state={section}>View Assignments</Link>
 
 const InstructorSectionsView = (props) => {
-    const headers = ['Sec No', 'Year', 'Semester', 'Course Id', 'Sec Id', 'Building', 'Room', 'Times', 
-                        'Instructor', 'Instructor Email'];
+    const headers = ['Sec No', 'Year', 'Semester', 'Course Id', 'Sec Id', 'Building', 'Room', 'Times',
+        'Instructor', 'Instructor Email'];
     const [sections, setSections] = useState([]);
-    
+
     const location = useLocation();
     const term = location.state;
 
@@ -44,7 +44,7 @@ const InstructorSectionsView = (props) => {
         <>
             <h3>Instructor Sections</h3>
             <table className="Center">
-            <thead>
+                <thead>
                     <tr>
                         {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
                     </tr>
@@ -63,7 +63,7 @@ const InstructorSectionsView = (props) => {
                             <td>{section.instructorName}</td>
                             <td>{section.instructorEmail}</td>
                             <td>
-                                <Link to={{ pathname: "/enrollments", state: { section } }}>View Enrollments</Link>
+                                <Link to='/enrollments' state={{ secNo: section.secNo, courseId: section.courseId, secId: section.secId }}>View Enrollments</Link>
                             </td>
                             <td>
                                 <Link to='/assignments' state={section.secNo}>View Assignments</Link>

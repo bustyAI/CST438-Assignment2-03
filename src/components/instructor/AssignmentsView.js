@@ -6,7 +6,7 @@ import AssignmentUpdate from './AssignmentUpdate';
 import AssignmentAdd from './AssignmentAdd';
 import Button from '@mui/material/Button';
 import { SERVER_URL } from '../../Constants';
-import { Link } from 'react-router-dom';
+
 // instructor views assignments for their section
 // use location to get the section value 
 // 
@@ -20,8 +20,6 @@ function AssignmentsView(props) {
 
     const [assignments, setAssignments] = useState([]);
     const [message, setMessage] = useState('');
-    const location = useLocation();
-    const sectionNo = location.state;
 
     const fetchAssignments = async (secNo) => {
         try {
@@ -29,6 +27,7 @@ function AssignmentsView(props) {
             if (response.ok) {
                 const assignments = await response.json();
                 setAssignments(assignments);
+                console.log(assignments);
             } else {
                 const json = await response.json();
                 setMessage("Response error: " + json.message);
@@ -39,7 +38,7 @@ function AssignmentsView(props) {
     }
 
     useEffect(() => {
-        fetchAssignments(sectionNo);
+        fetchAssignments("8"); // 8 is used for testing functionality
     }, []);
 
     const saveAssignment = async (assignment) => {
@@ -53,7 +52,7 @@ function AssignmentsView(props) {
             });
             if (response.ok) {
                 setMessage("Assignment saved");
-                fetchAssignments(sectionNo);
+                fetchAssignments("8"); // 8 is used for testing funcitonaliy
             } else {
                 const json = await response.json();
                 setMessage("Response error: " + json.message);
@@ -62,6 +61,27 @@ function AssignmentsView(props) {
             setMessage("Network error: " + err);
         }
     }
+
+    // const addAssignment = async (assignment) => {
+    //     try {
+    //         const response = await fetch(`${SERVER_URL}/assignments`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(assignment),
+    //         });
+    //         if (response.ok) {
+    //             setMessage("Assignment added");
+    //             fetchAssignments();
+    //         } else {
+    //             const rc = await response.json();
+    //             setMessage(rc.message);
+    //         }
+    //     } catch (err) {
+    //         setMessage("Network error: " + err);
+    //     }
+    // }
 
     const deleteAssignment = async (assignmentId) => {
         try {
@@ -121,14 +141,7 @@ function AssignmentsView(props) {
                             <td>{a.secId}</td>
                             <td>{a.secNo}</td>
                             <td><AssignmentUpdate assignment={a} onClose={fetchAssignments} save={saveAssignment} /></td>
-                            <td>
-                                <Link to={{ pathname: "/enrollments", state: { a } }}>View Enrollments</Link>
-                            </td>
-                            <td>
-                            <Link to='/grades' state={a.id}>View Grades</Link>
-                            </td>
                             <td><Button onClick={onDelete}>Delete</Button></td>
-                            <td><Button onClick={onDelete}>Grades</Button></td>
                         </tr>
                     ))}
                 </tbody>
