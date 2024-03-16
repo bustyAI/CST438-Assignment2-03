@@ -36,7 +36,7 @@ const AssignmentGrade = (props) => {
     }
 
     useEffect(() => {
-        fetchGrades(assignment); // 1 is used for testing functionality
+        fetchGrades(assignment); 
     }, []);
 
     const saveGrade = async (grade) => {
@@ -50,7 +50,7 @@ const AssignmentGrade = (props) => {
             });
             if (response.ok) {
                 setMessage("Grade saved");
-                fetchGrades(assignment); // 1 is used for testing funcitonaliy
+                fetchGrades(assignment);
             } else {
                 const json = await response.json();
                 setMessage("Response error: " + json.message);
@@ -69,7 +69,7 @@ const AssignmentGrade = (props) => {
     return (
         <div>
             <h3>Grades</h3>
-            <h4>Searching for AssignmentId: </h4>
+            <h4>Searching for AssignmentId: {assignment}</h4>
             <h4>{message}</h4>
             <table className="Center">
                 <thead>
