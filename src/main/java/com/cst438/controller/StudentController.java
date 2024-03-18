@@ -24,6 +24,9 @@ public class StudentController {
     EnrollmentRepository enrollmentRepository;
 
     @Autowired
+    GradeRepository gradeRepository;
+
+    @Autowired
     TermRepository termRepository;
 
     @Autowired
@@ -181,15 +184,21 @@ public class StudentController {
         // TODO
         // check that today is not after the dropDeadline for section
 
-        // previous method of fetching enrollment
         Enrollment e = enrollmentRepository.findById(enrollmentId).orElse(null);
-        //Enrollment e = enrollmentRepository.findEnrollmentByEnrollmentId(enrollmentId);
+        List<Grade> grades = e.getGrades();
 
         if (e != null) {
             LocalDate localDate = LocalDate.now();
             Date today = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
             Date dropDeadline = e.getSection().getTerm().getDropDeadline();
             if (!today.after(dropDeadline)) {
+                for (Grade grade : grades){
+                    int tempId = grade.getGradeId();
+                    Grade tempGrade = gradeRepository.findById(tempId).orElse(null);
+                    if (tempGrade != null){
+                        gradeRepository.delete(tempGrade);
+                    }
+                }
                 enrollmentRepository.delete(e);
             } else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "drop deadline has passed");
