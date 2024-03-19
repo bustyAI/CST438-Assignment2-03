@@ -64,6 +64,7 @@ function AssignmentsView(props) {
     }
 
     const deleteAssignment = async (assignmentId) => {
+        console.log(assignmentId)
         try {
             const response = await fetch(`${SERVER_URL}/assignments/${assignmentId}`, {
                 method: 'DELETE',
@@ -73,7 +74,7 @@ function AssignmentsView(props) {
             });
             if (response.ok) {
                 setMessage("Assignment deleted");
-                fetchAssignments();
+                fetchAssignments(sectionNo);
             } else {
                 const rc = await response.json();
                 setMessage("Delete failed " + rc.message);
@@ -83,9 +84,8 @@ function AssignmentsView(props) {
         }
     }
 
-    const onDelete = (e) => {
-        const row_idx = e.target.parentNode.parentNode.rowIndex - 1;
-        const assignmentId = assignments[row_idx].assignmentId;
+    const onDelete = (assignmentId) => {
+        console.log(assignmentId)
         confirmAlert({
             title: 'Confirm to delete',
             message: 'Do you really want to delete?',
@@ -124,7 +124,7 @@ function AssignmentsView(props) {
                             <td>
                                 <Link to='/grades' state={a.id}>View Grades</Link>
                             </td>
-                            <td><Button onClick={onDelete}>Delete</Button></td>
+                            <td><Button onClick={() => onDelete(a.id)}>Delete</Button></td>
                         </tr>
                     ))}
                 </tbody>

@@ -7,10 +7,6 @@ import com.cst438.dto.GradeDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -110,10 +106,21 @@ public class AssignmentController {
     public void deleteAssignment(@PathVariable("assignmentId") int assignmentId) {
 
         Assignment assignment = assignmentRepository.findById(assignmentId).orElse(null);
+        List<Grade> grades = assignment.getGrades();
 
         if (assignment == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Assignment not found: " + assignmentId);
         } else {
+            if (grades != null){
+                for (Grade grade : grades){
+                    int tempId = grade.getGradeId();
+                    Grade tempGrade = gradeRepository.findById(tempId).orElse(null);
+                    if (tempGrade != null){
+                        gradeRepository.delete(tempGrade);
+                    }
+                }
+            }
+            
             assignmentRepository.delete(assignment);
         }
     }
