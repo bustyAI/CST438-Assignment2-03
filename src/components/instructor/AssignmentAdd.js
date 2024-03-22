@@ -6,6 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { SERVER_URL } from '../../Constants';
+import { useLocation } from 'react-router-dom'
 
 // complete the code.  
 // instructor adds an assignment to a section
@@ -17,6 +18,8 @@ const AssignmentAdd = (props) => {
     const [open, setOpen] = useState(false);
     const [editMessage, setEditMessage] = useState('');
     const [assignment, setAssignment] = useState({ id: '', title: '', dueDate: '', courseId: '', secId: '', secNo: '' });
+    const location = useLocation();
+    const a = location.state;
 
     const editOpen = () => {
         setAssignment({ id: '', title: '', dueDate: '', courseId: '', secId: '', secNo: '' });
@@ -26,9 +29,7 @@ const AssignmentAdd = (props) => {
 
     const editClose = () => {
         setOpen(false);
-        props.onClose(8); // 8 is used for testing functionality
-        //setAssignment({ id: '', title: '', dueDate: '', courseId: '', secId: '', secNo: '' });
-        //setEditMessage('');
+        props.onClose(assignment.secNo);
     };
 
     const editChange = (event) => {
@@ -36,9 +37,10 @@ const AssignmentAdd = (props) => {
     }
 
     const onSave = async () => {
-        if (assignment.title === '' || assignment.dueDate === '' || assignment.secNo === '') {
-            setEditMessage('Must enter data for title, dudDate, and secNo');
+        if (assignment.title === '' || assignment.dueDate === '') {
+            setEditMessage('Must enter data for title and dudDate');
         } else {
+            assignment.secNo = a
             addAssignment(assignment);
         }
     }
@@ -69,9 +71,8 @@ const AssignmentAdd = (props) => {
                 <DialogTitle>Add Assignment</DialogTitle>
                 <DialogContent style={{ paddingTop: 20 }}>
                     <h4 id="addMessage">{editMessage}</h4>
-                    <TextField style={{ padding: 10 }} fullWidth label="Title" name="title" value={assignment.title.toString()} onChange={editChange} />
-                    <TextField style={{ padding: 10 }} fullWidth type="date" label="Due Date" name="dueDate" value={assignment.dueDate} onChange={editChange} />
-                    <TextField style={{ padding: 10 }} fullWidth label="Section No" name="secNo" value={assignment.secNo} onChange={editChange} />
+                    <TextField style={{ padding: 10 }} fullWidth id= "title" label="Title" name="title" value={assignment.title.toString()} onChange={editChange} />
+                    <TextField style={{ padding: 10 }} fullWidth id= "date" type="date" label="Due Date" name="dueDate" value={assignment.dueDate} onChange={editChange} />
                 </DialogContent>
                 <DialogActions>
                     <Button id="close" color="secondary" onClick={editClose}>Close</Button>
