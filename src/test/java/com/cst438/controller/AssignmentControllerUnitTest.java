@@ -2,7 +2,10 @@ package com.cst438.controller;
 
 import com.cst438.domain.Assignment;
 import com.cst438.domain.AssignmentRepository;
+import com.cst438.domain.Grade;
+import com.cst438.domain.GradeRepository;
 import com.cst438.dto.AssignmentDTO;
+import com.cst438.dto.GradeDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Arrays;
 
 
 @AutoConfigureMockMvc
@@ -28,6 +33,9 @@ public class AssignmentControllerUnitTest {
 
     @Autowired
     AssignmentRepository assignmentRepository;
+
+    @Autowired
+    GradeRepository gradeRepository;
 
     @Test
     public void addAssignment() throws Exception {
@@ -198,6 +206,77 @@ public class AssignmentControllerUnitTest {
         String message = response.getErrorMessage();
         assertEquals("section not found: 9001", message);
 
+    }
+
+    @Test
+    public void addGradeToAssignment() throws Exception {
+
+        MockHttpServletResponse response;
+
+        // Only assignemnt in DB
+        int assignmentId = 1;
+
+        // GET request
+        response = mvc.perform(
+                        MockMvcRequestBuilders
+                        .get("/assignments/" + assignmentId + "/grades")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse();
+
+        // Response should be OK (200)
+        assertEquals(200, response.getStatus());
+
+        // Return data converted from String to DTO
+        List<GradeDTO> gradeDTOs = Arrays.asList(fromJsonString(response.getContentAsString(), GradeDTO[].class));
+        
+        // Update the grades with scores
+        for (GradeDTO gradeDTO : gradeDTOs) {
+            // Set the score in the GradeDTO object
+            gradeDTO = new GradeDTO(
+                    gradeDTO.gradeId(),
+                    gradeDTO.studentName(),
+                    gradeDTO.studentEmail(),
+                    gradeDTO.assignmentTitle(),
+                    gradeDTO.courseId(),
+                    gradeDTO.sectionId(),
+                    90 
+            );
+            assertEquals(90, gradeDTO.score());
+        }
+
+        // PUT request to save the updated grades
+        response = mvc.perform(
+                        MockMvcRequestBuilders
+                        .put("/grades")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(gradeDTOs)))
+            .andReturn()
+            .getResponse();
+
+         // Response should be OK (200)
+        assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void invalidAddGradeToAssignment() throws Exception {
+
+        MockHttpServletResponse response;
+
+        // Only assignemnt in DB
+        int assignmentId = -1;
+
+        // issue the GET request
+        response = mvc.perform(
+                        MockMvcRequestBuilders
+                        .get("/assignments/" + assignmentId + "/grades")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse();
+
+        // Response should be 404
+        assertEquals(404, response.getStatus());
     }
 
 
