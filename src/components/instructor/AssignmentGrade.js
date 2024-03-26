@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom'
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { SERVER_URL } from '../../Constants';
+import { Outlet, Link } from "react-router-dom";
 
 // instructor enters students' grades for an assignment
 // fetch the grades using the URL /assignments/{id}/grades
@@ -70,7 +71,7 @@ const AssignmentGrade = (props) => {
         <div>
             <h3>Grades</h3>
             <h4>Searching for AssignmentId: {assignment}</h4>
-            <h4>{message}</h4>
+            <h4 id="gradeMessage">{message}</h4>
             <table className="Center">
                 <thead>
                     <tr>
@@ -89,12 +90,13 @@ const AssignmentGrade = (props) => {
                             <td>
                                 <input
                                     type="text"
+                                    id= {g.gradeId + " score"}
                                     defaultValue={g.score}
                                     onChange={(e) => handleGradeChange(g, e.target.value)}
                                 />
                             </td>
                             <td>
-                            <button onClick={() => saveGrade(grades)}>Save</button>
+                            <button id= {g.gradeId + " save"} onClick={() => saveGrade(grades)}>Save</button>
                             </td>
                         </tr>
                     ))}
