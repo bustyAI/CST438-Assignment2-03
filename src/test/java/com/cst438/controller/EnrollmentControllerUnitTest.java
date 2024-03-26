@@ -5,8 +5,10 @@ import com.cst438.domain.EnrollmentRepository;
 import com.cst438.dto.EnrollmentDTO;
 import com.cst438.domain.Section;
 import com.cst438.domain.SectionRepository;
+import com.cst438.dto.GradeDTO;
 import com.cst438.dto.SectionDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.glassfish.jaxb.core.v2.TODO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,6 +17,12 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -118,7 +126,72 @@ public class EnrollmentControllerUnitTest {
         assertEquals("Section not found matching: 77", message);
     }
 
+//    Unit test invokes REST api GET for the url /sections/{sectionNo}/enrollments.
+//    Update the returned list of EnrollmentDTO objects with grades and the invokes
+//    PUT /enrollments with a body containing the updates EnrollmentDTO objects.
+//    The request is successful and the test contains asserts for the status code.
+    @Test
+    public void updateEnrollmentGrade() throws Exception {
 
+//        TODO check for duplicated enrollments
+
+        // Updating grade for section 1
+        int sectionNo = 1;
+        MockHttpServletResponse response;
+
+        // GET request
+        response = mvc.perform(MockMvcRequestBuilders
+                .get("/sections/" + sectionNo + "/enrollments")
+                .accept(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse();
+
+        // Response should yield OK (200)
+        assertEquals(200, response.getStatus());
+
+        // Converting data from string to EnrollmentDTO
+        List<EnrollmentDTO> enrollmentDTOs = Arrays
+                .asList(fromJsonString(response.getContentAsString(), EnrollmentDTO[].class));
+
+        // Update the enrollment grades
+        List<EnrollmentDTO> updatedEnrollmentDTOs = enrollmentDTOs.stream().map(enrollmentDTO -> new EnrollmentDTO(
+                enrollmentDTO.enrollmentId(),
+                "B",
+                enrollmentDTO.studentId(),
+                enrollmentDTO.name(),
+                enrollmentDTO.email(),
+                enrollmentDTO.courseId(),
+                enrollmentDTO.sectionId(),
+                enrollmentDTO.sectionNo(),
+                enrollmentDTO.building(),
+                enrollmentDTO.room(),
+                enrollmentDTO.times(),
+                enrollmentDTO.credits(),
+                enrollmentDTO.year(),
+                enrollmentDTO.semester()
+
+        )).toList();
+
+        // ensuring all enrollment grades are updated
+        for (EnrollmentDTO enrollmentDTO: updatedEnrollmentDTOs) {
+            assertEquals("B", enrollmentDTO.grade());
+        }
+
+        // PUT request to update grade
+        response = mvc.perform(
+                MockMvcRequestBuilders
+                        .put("/enrollments")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(updatedEnrollmentDTOs)))
+                .andReturn()
+                .getResponse();
+
+        System.out.println(updatedEnrollmentDTOs);
+        // Response should yield OK (200)
+        assertEquals(200, response.getStatus());
+
+    }
 
     private static String asJsonString(final Object obj) {
         try {
