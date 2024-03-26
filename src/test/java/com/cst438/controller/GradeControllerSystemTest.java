@@ -75,15 +75,15 @@ public class GradeControllerSystemTest {
         Thread.sleep(SLEEP_DURATION);
 
         // verify that cst363 is in the list of sections
-        WebElement row499 = driver.findElement(By.xpath("//tr[td='cst363']"));
-        row499.findElement(By.id("8assignments")).click();
+        WebElement row363 = driver.findElement(By.xpath("//tr[td='cst363']"));
+        row363.findElement(By.id("8assignments")).click();
         Thread.sleep(SLEEP_DURATION);
 
         // open grades for assignmentId 1
         driver.findElement(By.id("1 grades")).click();
         Thread.sleep(SLEEP_DURATION);
 
-        // change gradeid score to 60
+        // change gradeid 2 score to 60
         WebElement score = driver.findElement(By.id("2 score"));
         score.sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
         Thread.sleep(SLEEP_DURATION);
@@ -96,7 +96,20 @@ public class GradeControllerSystemTest {
         String message = msg.getText();
         assertEquals("Grade saved", message);
 
-        // change gradeid score back to 80
+        // change gradeid 1 score to 55
+        WebElement score2 = driver.findElement(By.id("1 score"));
+        score2.sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
+        Thread.sleep(SLEEP_DURATION);
+        score2.sendKeys("55");
+
+        driver.findElement(By.id("1 save")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        WebElement msg2 = driver.findElement(By.id("gradeMessage"));
+        String message2 = msg2.getText();
+        assertEquals("Grade saved", message2);
+
+        // change gradeid 2 score back to 80
         score = driver.findElement(By.id("2 score"));
         score.sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
         Thread.sleep(SLEEP_DURATION);
@@ -109,6 +122,18 @@ public class GradeControllerSystemTest {
         message = msg.getText();
         assertEquals("Grade saved", message);
 
+        // change gradeid 1 score back to 75
+        score = driver.findElement(By.id("1 score"));
+        score.sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
+        Thread.sleep(SLEEP_DURATION);
+        score.sendKeys("75");
+
+        driver.findElement(By.id("1 save")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        msg = driver.findElement(By.id("gradeMessage"));
+        message = msg.getText();
+        assertEquals("Grade saved", message);
     }
 
     @Test
