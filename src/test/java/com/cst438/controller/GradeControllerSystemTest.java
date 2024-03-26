@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+
+import java.security.Key;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -86,7 +88,7 @@ public class GradeControllerSystemTest {
         score.sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
         Thread.sleep(SLEEP_DURATION);
         score.sendKeys("60");
-        
+
         driver.findElement(By.id("2 save")).click();
         Thread.sleep(SLEEP_DURATION);
 
@@ -99,13 +101,55 @@ public class GradeControllerSystemTest {
         score.sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
         Thread.sleep(SLEEP_DURATION);
         score.sendKeys("80");
-        
+
         driver.findElement(By.id("2 save")).click();
         Thread.sleep(SLEEP_DURATION);
 
         msg = driver.findElement(By.id("gradeMessage"));
         message = msg.getText();
         assertEquals("Grade saved", message);
+
+    }
+
+    @Test
+    public void systemTestEnterFinalEnrollmentGrade() throws Exception {
+
+        // Enter year and semester then search
+        driver.findElement(By.id("year")).sendKeys("2024");
+        driver.findElement(By.id("semester")).sendKeys("Spring");
+        driver.findElement(By.id("search")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        // Verify that course cst363 exist
+        WebElement cst363 = driver.findElement(By.xpath("//tr[td='cst363']"));
+        cst363.findElement(By.id("8enrollments")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        // Find first enrollment and change grade
+        WebElement enrollment5 = driver.findElement(By.id("5enrollmentGrade"));
+        enrollment5.sendKeys(Keys.chord(Keys.CONTROL, "a", Keys.DELETE));
+        Thread.sleep(SLEEP_DURATION);
+        enrollment5.sendKeys("C");
+
+        // Saving grade
+        driver.findElement(By.id("5saveEnrollmentGrade")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        // Checking to see if grade changed successfully
+       WebElement message = driver.findElement(By.id("enrollmentGradeMessage"));
+       assertEquals("Successfully updated grades", message.getText());
+
+        // Find second enrollment and change grade
+        WebElement enrollment2 = driver.findElement(By.id("2enrollmentGrade"));
+        enrollment2.sendKeys(Keys.chord(Keys.CONTROL, "a", Keys.DELETE));
+        Thread.sleep(SLEEP_DURATION);
+        enrollment2.sendKeys("A");
+
+        driver.findElement(By.id("2saveEnrollmentGrade")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        WebElement message2 = driver.findElement(By.id("enrollmentGradeMessage"));
+        assertEquals("Successfully updated grades", message2.getText());
 
     }
 
