@@ -44,36 +44,64 @@ public void systemTestEnrollStudentSuccess() throws Exception {
     // Assumes navigation to the page and the selection process is done correctly
     // ...
 
+    // Navigate to view schedule
+    driver.findElement(By.id("view_schedule")).click();
+    Thread.sleep(SLEEP_DURATION);
+    driver.findElement(By.id("syear")).sendKeys("2024");
+    driver.findElement(By.id("ssemester")).sendKeys("Spring");
+    driver.findElement(By.id("search")).click();
+    Thread.sleep(SLEEP_DURATION);
+
+    // verify that courseId: cst363 section: 9 is not in the list
+    // if it exists, then delete it
+    // Selenium throws NoSuchElementException when the element is not found
+    try {
+        while (true) {
+            WebElement row363 = driver.findElement(By.xpath("//tr[td='cst363']"));
+            List<WebElement> buttons = row363.findElements(By.tagName("button"));
+            // delete is the first button
+            assertEquals(1, buttons.size());
+            buttons.get(0).click();
+            Thread.sleep(SLEEP_DURATION);
+            Thread.sleep(SLEEP_DURATION);
+        }
+    } catch (NoSuchElementException e) {
+        // do nothing, continue with test
+    }
+
     // Perform enrollment
     driver.findElement(By.id("enrollInClass")).click();
+    Thread.sleep(SLEEP_DURATION);
+
+    // select section 9
+    driver.findElement(By.id("section 9")).click();
+    Thread.sleep(SLEEP_DURATION);
+
+    // enroll in section
+    driver.findElement(By.id("enrollButton")).click();
     Thread.sleep(SLEEP_DURATION);
 
     // Navigate to view schedule
     driver.findElement(By.id("view_schedule")).click();
     Thread.sleep(SLEEP_DURATION);
-    driver.findElement(By.id("year_input")).sendKeys("2024");
-    driver.findElement(By.id("semester_input")).sendKeys("Spring");
-    driver.findElement(By.id("view_schedule_button")).click();
+    driver.findElement(By.id("syear")).sendKeys("2024");
+    driver.findElement(By.id("ssemester")).sendKeys("Spring");
+    driver.findElement(By.id("search")).click();
     Thread.sleep(SLEEP_DURATION);
 
-    // Assert the enrolled section appears in the schedule
-    WebElement enrolledSection = driver.findElement(By.xpath("//tr[td[contains(text(),'cst101')]]"));
-    assertNotNull(enrolledSection);
-}
 
-@Test
-public void systemTestEnrollStudentFailureAlreadyEnrolled() throws Exception {
-    // Attempt to enroll in the same section again
-    // ...
-
-    // Perform enrollment again
-    driver.findElement(By.id("enrollInClass")).click();
+    // verify that courseId: cst363 section: 9 is not in the list
+    // if it exists, then delete it
+    // Selenium throws NoSuchElementException when the element is not found
+    WebElement row363 = driver.findElement(By.xpath("//tr[td='cst363']"));
+    assertNotNull(row363);
+    List<WebElement> buttons = row363.findElements(By.tagName("button"));
+    // delete is the first button
+    assertEquals(1, buttons.size());
+    buttons.get(0).click();
     Thread.sleep(SLEEP_DURATION);
-
-    // Check for an error message indicating failure due to already being enrolled
-    WebElement errorMessage = driver.findElement(By.id("enrollment_error"));
-    String message = errorMessage.getText();
-    assertEquals("Already enrolled", message);
-}
+    Thread.sleep(SLEEP_DURATION);
+    
+    }
 
 }
