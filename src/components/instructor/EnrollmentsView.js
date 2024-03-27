@@ -48,7 +48,7 @@ const EnrollmentsView = (props) => {
                 });
             if (response.ok) {
                 fetchEnrollments(secNo);
-                setMessage("Successfully got Students")
+                setMessage("Successfully updated grades")
             } else {
                 const json = response.json();
                 setMessage("Response error: " + json.message);
@@ -72,7 +72,7 @@ const EnrollmentsView = (props) => {
 
     return (
         <div>
-            <h4>{message}</h4>
+            <h4 id='enrollmentGradeMessage'>{message}</h4>
             <table className='Center'>
 
                 <thead>
@@ -88,13 +88,14 @@ const EnrollmentsView = (props) => {
                             <td>{enrollment.name}</td>
                             <td>{enrollment.email}</td>
                             <td><input
+                                id={enrollment.enrollmentId + "enrollmentGrade"}
                                 type='text'
                                 name='grade'
                                 value={enrollment.grade || ""}
                                 onChange={(e) => onGradeChange(index, e.target.value)}></input>
                             </td>
                             <td>
-                                <Button onClick={() => saveGrade(enrollment)}>Save Grade</Button>
+                                <Button id={enrollment.enrollmentId + 'saveEnrollmentGrade'} onClick={() => saveGrade(enrollment)}>Save Grade</Button>
                             </td>
                         </tr>
                     ))}
