@@ -45,7 +45,7 @@ public void systemTestEnrollStudentSuccess() throws Exception {
     // ...
 
     // Perform enrollment
-    driver.findElement(By.id("enroll_button")).click();
+    driver.findElement(By.id("enrollInClass")).click();
     Thread.sleep(SLEEP_DURATION);
 
     // Navigate to view schedule
@@ -67,7 +67,7 @@ public void systemTestEnrollStudentFailureAlreadyEnrolled() throws Exception {
     // ...
 
     // Perform enrollment again
-    driver.findElement(By.id("enroll_button")).click();
+    driver.findElement(By.id("enrollInClass")).click();
     Thread.sleep(SLEEP_DURATION);
 
     // Check for an error message indicating failure due to already being enrolled
