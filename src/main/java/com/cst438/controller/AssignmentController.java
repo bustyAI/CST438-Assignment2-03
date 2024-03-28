@@ -67,7 +67,7 @@ public class AssignmentController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "section not found: " + dto.secNo());
         } 
         else if ((dto.dueDate().after(termEnd) || dto.dueDate().before(termStart))){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid due date: " + dto.dueDate() + ". Term is from: " + termStart + " to " + termEnd + ".");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid due date: " + dto.id() + ". Term is from: " + termStart + " to " + termEnd + ".");
         }
         
         Assignment assignment = new Assignment();
@@ -151,14 +151,18 @@ public class AssignmentController {
         for (Enrollment e : enrollments){
             Grade grade = gradeRepository.findByEnrollmentIdAndAssignmentId(e.getEnrollmentId(), assignmentId);
             if (grade == null) {
-                dto_list.add(new GradeDTO(9001, e.getUser().getName(), e.getUser().getEmail(), null, 
-                e.getSection().getCourse().getCourseId(), e.getSection().getSecId(), null));    
-            } else{
-                dto_list.add(new GradeDTO(grade.getGradeId(), e.getUser().getName(), e.getUser().getEmail(), 
-                grade.getAssignment().getTitle(), e.getSection().getCourse().getCourseId(), 
-                e.getSection().getSecId(), grade.getScore()));
-            }
-            
+                grade = new Grade();
+                grade.setGradeId(0);
+                grade.setScore(null);
+                grade.setEnrollment(e);
+                grade.setAssignment(assignment);
+                gradeRepository.save(grade);  
+            } 
+           
+            dto_list.add(new GradeDTO(grade.getGradeId(), e.getUser().getName(), e.getUser().getEmail(), 
+            assignment.getTitle(), e.getSection().getCourse().getCourseId(), 
+            e.getSection().getSecId(), grade.getScore()));
+        
         }
 
 
