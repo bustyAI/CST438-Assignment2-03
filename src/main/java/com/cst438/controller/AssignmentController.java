@@ -45,18 +45,11 @@ public class AssignmentController {
         List<Assignment> assignments = assignmentRepository.findBySectionNoOrderByDueDate(secNo);
         List<AssignmentDTO> dto_list = new ArrayList<>();
 
-
-        if (assignments.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No assignments found for section: " + secNo);
-        }
-
-
         for (Assignment a : assignments) {
             dto_list.add(new AssignmentDTO(a.getAssignmentId(), a.getTitle(), a.getDueDate(),
                     a.getSection().getCourse().getCourseId(), a.getSection().getSecId(),
                     a.getSection().getSectionNo()));
         }
-
 
         return dto_list;
     }
@@ -67,14 +60,14 @@ public class AssignmentController {
     @PostMapping("/assignments")
     public AssignmentDTO createAssignment(@RequestBody AssignmentDTO dto) {
         Section section = sectionRepository.findById(dto.secNo()).orElse(null);
-        LocalDate localDate = LocalDate.now();
-        Date testDate = Date.valueOf(localDate);
+        Date termStart = section.getTerm().getStartDate();
+        Date termEnd = section.getTerm().getEndDate();
 
-        if (section == null ) {
+        if (section == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "section not found: " + dto.secNo());
         } 
-        else if (dto.dueDate().before(testDate)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid due date " + dto.dueDate());
+        else if ((dto.dueDate().after(termEnd) || dto.dueDate().before(termStart))){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid due date: " + dto.dueDate() + ". Term is from: " + termStart + " to " + termEnd + ".");
         }
         
         Assignment assignment = new Assignment();
@@ -97,6 +90,13 @@ public class AssignmentController {
     @PutMapping("/assignments")
     public AssignmentDTO updateAssignment(@RequestBody AssignmentDTO dto) {
         Assignment assignment = assignmentRepository.findById(dto.id()).orElse(null);
+        Date termStart = assignment.getSection().getTerm().getStartDate();
+        Date termEnd = assignment.getSection().getTerm().getEndDate();
+
+        if (dto.dueDate().after(termEnd) || dto.dueDate().before(termStart)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid due date: " + dto.dueDate() + ". Term is from: " + termStart + " to " + termEnd + ".");
+        }
+
         if (assignment == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Assignment not found: " + dto.id());
         } else {
@@ -120,7 +120,7 @@ public class AssignmentController {
         if (assignment == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Assignment not found: " + assignmentId);
         } else {
-            if (grades != null){
+            if (grades != null && !grades.isEmpty()){
                 for (Grade grade : grades){
                     int tempId = grade.getGradeId();
                     Grade tempGrade = gradeRepository.findById(tempId).orElse(null);
@@ -151,11 +151,14 @@ public class AssignmentController {
         for (Enrollment e : enrollments){
             Grade grade = gradeRepository.findByEnrollmentIdAndAssignmentId(e.getEnrollmentId(), assignmentId);
             if (grade == null) {
-                continue;
+                dto_list.add(new GradeDTO(9001, e.getUser().getName(), e.getUser().getEmail(), null, 
+                e.getSection().getCourse().getCourseId(), e.getSection().getSecId(), null));    
+            } else{
+                dto_list.add(new GradeDTO(grade.getGradeId(), e.getUser().getName(), e.getUser().getEmail(), 
+                grade.getAssignment().getTitle(), e.getSection().getCourse().getCourseId(), 
+                e.getSection().getSecId(), grade.getScore()));
             }
-            dto_list.add(new GradeDTO(grade.getGradeId(), e.getUser().getName(), e.getUser().getEmail(),
-            grade.getAssignment().getTitle(), e.getSection().getCourse().getCourseId(), e.getSection().getSecId(),
-                    grade.getScore()));
+            
         }
 
 

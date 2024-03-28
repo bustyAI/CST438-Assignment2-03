@@ -5,6 +5,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { SERVER_URL } from '../../Constants';
 
 //  instructor updates assignment title, dueDate 
 //  use an mui Dialog
@@ -17,8 +18,9 @@ const AssignmentUpdate = (props) => {
   const [assignment, setAssignment] = useState({ id: '', title: '', dueDate: '', courseId: '', secId: '', secNo: '' })
 
   const editOpen = (event) => {
-    setOpen(true);
     setEditMessage('');
+    setAssignment({ id: '', title: '', dueDate: '', courseId: '', secId: '', secNo: '' });
+    setOpen(true);
     setAssignment(props.assignment);
   }
 
@@ -43,8 +45,28 @@ const AssignmentUpdate = (props) => {
     } else if (! /^\d+$/.test(assignment.secNo)) {
       setEditMessage("SecNo must be an integer")
     } else {
-      props.save(assignment)
-      editClose();
+      saveAssignment(assignment);
+    }
+  }
+
+  const saveAssignment = async (assignment) => {
+    try {
+      const response = await fetch (`${SERVER_URL}/assignments`, 
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          }, 
+          body: JSON.stringify(assignment),
+        });
+      if (response.ok) {
+        setEditMessage("assignment saved");
+      } else {
+        const rc = await response.json();
+        setEditMessage(rc.message);
+      }
+    } catch (err) {
+      setEditMessage("network error: "+err);
     }
   }
 
