@@ -10,6 +10,10 @@ import com.cst438.domain.TermRepository;
 import com.cst438.domain.UserRepository;
 import com.cst438.dto.CourseDTO;
 import com.cst438.dto.EnrollmentDTO;
+import com.cst438.service.RegistrarServiceProxy;
+
+import scala.annotation.elidable;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +28,9 @@ public class EnrollmentController {
 
     @Autowired
     EnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    RegistrarServiceProxy registrarService;
 
 
     // instructor downloads student enrollments for a section, ordered by student name
@@ -61,6 +68,23 @@ public class EnrollmentController {
                 enrollmentRepository.findEnrollmentBySectionNoAndStudentId(e.sectionNo(), e.studentId());
                 enrollment.setGrade(e.grade());
                 enrollmentRepository.save(enrollment);
+                EnrollmentDTO enrollmentDTO = new EnrollmentDTO(
+                    enrollment.getEnrollmentId(),
+                    enrollment.getGrade(),
+                    enrollment.getUser().getId(),
+                    enrollment.getUser().getName(),
+                    enrollment.getUser().getEmail(),
+                    enrollment.getSection().getCourse().getCourseId(),
+                    enrollment.getSection().getSecId(),
+                    enrollment.getSection().getSectionNo(),
+                    enrollment.getSection().getBuilding(),
+                    enrollment.getSection().getRoom(),
+                    enrollment.getSection().getTimes(),
+                    enrollment.getSection().getCourse().getCredits(),
+                    enrollment.getSection().getTerm().getYear(),
+                    enrollment.getSection().getTerm().getSemester()   
+                );
+                registrarService.updateEnrollmentGrade(enrollmentDTO);
             }
             counter++;
         }
