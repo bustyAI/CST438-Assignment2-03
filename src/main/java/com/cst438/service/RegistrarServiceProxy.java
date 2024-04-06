@@ -3,12 +3,16 @@ package com.cst438.service;
 import com.cst438.domain.*;
 import com.cst438.dto.*;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.hibernate.grammars.hql.HqlParser.SecondContext;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +22,8 @@ public class RegistrarServiceProxy {
 
     Queue registrarServiceQueue = new Queue("registrar_service", true);
 
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    
     @Bean
     public Queue createQueue() {
         return new Queue("gradebook_service", true);
@@ -38,6 +44,13 @@ public class RegistrarServiceProxy {
     @Autowired
     TermRepository termRepository;
 
+    @Autowired
+    EnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    GradeRepository gradeRepository;
+
+
     public void updateEnrollmentGrade(EnrollmentDTO enrollment) {
         sendMessage("updateEnrollment " + asJsonString(enrollment));
     }
@@ -56,28 +69,40 @@ public class RegistrarServiceProxy {
 
 @RabbitListener(queues = "gradebook_service")
 public void receiveFromRegistrar(String message) {
-    try {
-        handleCourseMessage(message);
-    } catch (Exception e) {
-        System.out.println("Exception in receiveFromRegistrar for course: " + e.getMessage());
-    }
-
-    try {
-        handleSectionMessage(message);
-    } catch (Exception e) {
-        System.out.println("Exception in receiveFromRegistrar for section: " + e.getMessage());
-    }
-
-    try {
-        handleUserMessage(message);
-    } catch (Exception e) {
-        System.out.println("Exception in receiveFromRegistrar for user: " + e.getMessage());
+    String[] parts = message.split(" ", 2);
+    String functionName = parts[0].toLowerCase();
+    
+    if (functionName.contains("course")) {
+        try {
+            handleCourseMessage(message);
+        } catch (Exception e) {
+            System.out.println("Exception in receiveFromRegistrar for course: " + e.getMessage());
+        }
+    } else if (functionName.contains("section")) {
+        try {
+            handleSectionMessage(message);
+        } catch (Exception e) {
+            System.out.println("Exception in receiveFromRegistrar for section: " + e.getMessage());
+        }
+    } else if (functionName.contains("user")) {
+        try {
+            handleUserMessage(message);
+        } catch (Exception e) {
+            System.out.println("Exception in receiveFromRegistrar for user: " + e.getMessage());
+        }
+    } else if (functionName.contains("enrollment")){
+        try {
+            handleEnrollmentMessage(message);
+        } catch (Exception e) {
+            System.out.println("Exception in receiveFromRegistrar for enrollment: " + e.getMessage());
+        }
     }
 }
 
 private void handleCourseMessage(String message) {
     System.out.println("receive from Registrar for course: " + message);
     String[] parts = message.split(" ", 2);
+
     if (parts[0].equals("updateCourse")) {
         CourseDTO dto = fromJsonString(parts[1], CourseDTO.class);
         Course c = courseRepository.findById(dto.courseId()).orElse(null);
@@ -97,12 +122,13 @@ private void handleCourseMessage(String message) {
         courseRepository.save(c);
     } else if (parts[0].equals("deleteCourse")) {
         courseRepository.deleteById(parts[1]);
-    }
+    } 
 }
 
 private void handleSectionMessage(String message) {
     System.out.println("receive from Registrar for section: " + message);
     String[] parts = message.split(" ", 2);
+
     if (parts[0].equals("updateSection")) {
         SectionDTO dto = fromJsonString(parts[1], SectionDTO.class);
         Section s = sectionRepository.findById(dto.secId()).orElse(null);
@@ -136,6 +162,7 @@ private void handleSectionMessage(String message) {
 private void handleUserMessage(String message) {
     System.out.println("receive from Registrar for user: " + message);
     String[] parts = message.split(" ", 2);
+
     if (parts[0].equals("updateUser")) {
         UserDTO dto = fromJsonString(parts[1], UserDTO.class);
         User u = userRepository.findById(dto.id()).orElse(null);
@@ -150,17 +177,57 @@ private void handleUserMessage(String message) {
     } else if (parts[0].equals("addUser")) {
         UserDTO dto = fromJsonString(parts[1], UserDTO.class);
         User u = new User();
+        String password = dto.name()+"2024";
+        String enc_password = encoder.encode(password);
+        u.setId(dto.id());
         u.setName(dto.name());
         u.setEmail(dto.email());
         u.setType(dto.type());
+        u.setPassword(enc_password);
         userRepository.save(u);
 
     } else if (parts[0].equals("deleteUser")){
         int userToDelete = Integer.parseInt(parts[1].trim());
         userRepository.deleteById(userToDelete);
-    }
+    } 
 }
 
+private void handleEnrollmentMessage(String message) {
+    System.out.println("receive from Registrar for enrollment: " + message);
+    String[] parts = message.split(" ", 2);
+
+    if (parts[0].equals("addEnrollment")) {
+        EnrollmentDTO eDTO = fromJsonString(parts[1], EnrollmentDTO.class);
+        Enrollment e = new Enrollment();
+        User u = userRepository.findByEmail(eDTO.email());
+        Section s = sectionRepository.findById(eDTO.sectionId()).orElse(null);
+        e.setEnrollmentId(eDTO.enrollmentId());
+        e.setGrade(eDTO.grade());
+        e.setUser(u);
+        e.setSection(s);
+        enrollmentRepository.save(e);
+
+    } 
+    // BROKEN NOT SURE WHAT IS CAUSING IT -nathan
+    else if (parts[0].equals("dropEnrollment")) {
+        int enrollmentId = Integer.parseInt(parts[1].trim());
+        System.out.println("enrollmentId: " + enrollmentId);
+
+        Enrollment e = enrollmentRepository.findById(enrollmentId).orElse(null);
+        List<Grade> grades = e.getGrades();
+        if (e != null){
+            for (Grade grade : grades){
+                int tempId = grade.getGradeId();
+                Grade tempGrade = gradeRepository.findById(tempId).orElse(null);
+                if (tempGrade != null){
+                    gradeRepository.delete(tempGrade);
+                }
+            }
+        }
+        enrollmentRepository.delete(e);
+        
+    } 
+}
 
     private void sendMessage(String s) {
         System.out.println("Gradebook to Registar " + s);
