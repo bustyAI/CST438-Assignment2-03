@@ -185,32 +185,25 @@ public class StudentController {
 
     // student drops a course
     // user must be student
-//    @DeleteMapping("/enrollments/{enrollmentId}")
-//    public void dropCourse(@PathVariable("enrollmentId") int enrollmentId) {
-//        // TODO
-//        // check that today is not after the dropDeadline for section
-//
-//        Enrollment e = enrollmentRepository.findById(enrollmentId).orElse(null);
-//        List<Grade> grades = e.getGrades();
-//
-//        if (e != null) {
-//            LocalDate localDate = LocalDate.now();
-//            Date today = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-//            Date dropDeadline = e.getSection().getTerm().getDropDeadline();
-//            if (!today.after(dropDeadline)) {
-//                for (Grade grade : grades){
-//                    int tempId = grade.getGradeId();
-//                    Grade tempGrade = gradeRepository.findById(tempId).orElse(null);
-//                    if (tempGrade != null){
-//                        gradeRepository.delete(tempGrade);
-//                    }
-//                }
-//                enrollmentRepository.delete(e);
-//            } else {
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "drop deadline has passed");
-//            }
-//        } else{
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "enrollment not found");
-//        }
-//    }
+   @DeleteMapping("/enrollments/{enrollmentId}")
+   public void dropCourse(@PathVariable("enrollmentId") int enrollmentId) {
+       // TODO
+       // check that today is not after the dropDeadline for section
+
+       Enrollment e = enrollmentRepository.findById(enrollmentId).orElse(null);       
+
+       if (e != null) {
+           LocalDate localDate = LocalDate.now();
+           Date today = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+           Date dropDeadline = e.getSection().getTerm().getDropDeadline();
+           if (!today.after(dropDeadline)) {
+                gradebookService.dropCourse(enrollmentId);
+                enrollmentRepository.delete(e);
+           } else {
+               throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "drop deadline has passed");
+           }
+       } else{
+           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "enrollment not found");
+       }
+   }
 }

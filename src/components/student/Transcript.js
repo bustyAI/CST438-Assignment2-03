@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { SERVER_URL } from "../../Constants";
-
+import { REGISTRAR_URL } from "../../Constants";
+import { GRADEBOOK_URL } from "../../Constants";
 
 // students gets a list of all courses taken and grades
 // use the URL /transcript?studentId=
@@ -19,7 +19,7 @@ const Transcript = (props) => {
     const fetchTranscript = async () => {
         try {
             // studentId=3 will be removed in assignment 7
-            const response = await fetch(`${SERVER_URL}/transcript?studentId=${3}`);
+            const response = await fetch(`${REGISTRAR_URL}/transcript?studentId=${3}`);
             if (response.ok) {
                 const data = await response.json();
                 getEnrollments(data);

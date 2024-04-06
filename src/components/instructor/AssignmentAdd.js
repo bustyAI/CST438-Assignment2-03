@@ -5,7 +5,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { SERVER_URL } from '../../Constants';
+import { REGISTRAR_URL } from '../../Constants';
 import { useLocation } from 'react-router-dom'
 
 // complete the code.  
@@ -47,7 +47,7 @@ const AssignmentAdd = (props) => {
 
     const addAssignment = async (assignment) => {
         try {
-            const response = await fetch(`${SERVER_URL}/assignments`, {
+            const response = await fetch(`${REGISTRAR_URL}/assignments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

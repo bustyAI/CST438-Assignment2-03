@@ -79,6 +79,7 @@ public class GradebookServiceProxy {
                     enrollmentRepository.save(e);
                 }
             }
+            
         } catch (Exception e){
             System.out.println("Exception in receiveFromGradebook " + e.getMessage());
         }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import { SERVER_URL } from '../../Constants';
+import { REGISTRAR_URL } from '../../Constants';
 
 // instructor views a list of sections they are teaching 
 // use the URL /sections?email=dwisneski@csumb.edu&year= &semester=
@@ -24,7 +24,7 @@ const InstructorSectionsView = (props) => {
 
     const fetchSections = async () => {
         try {
-            const response = await fetch(`${SERVER_URL}/sections?email=dwisneski@csumb.edu&year=${parseInt(term.year)}&semester=${term.semester}`);
+            const response = await fetch(`${REGISTRAR_URL}/sections?email=dwisneski@csumb.edu&year=${parseInt(term.year)}&semester=${term.semester}`);
             if (response.ok) {
                 const sections = await response.json();
                 setSections(sections);

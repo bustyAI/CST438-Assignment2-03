@@ -5,8 +5,9 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import AssignmentUpdate from './AssignmentUpdate';
 import AssignmentAdd from './AssignmentAdd';
 import Button from '@mui/material/Button';
-import { SERVER_URL } from '../../Constants';
+import { REGISTRAR_URL } from '../../Constants';
 import { Link } from 'react-router-dom';
+import { GRADEBOOK_URL } from '../../Constants';
 // instructor views assignments for their section
 // use location to get the section value 
 // 
@@ -25,7 +26,7 @@ function AssignmentsView(props) {
 
     const fetchAssignments = async (secNo) => {
         try {
-            const response = await fetch(`${SERVER_URL}/sections/${secNo}/assignments`);
+            const response = await fetch(`${REGISTRAR_URL}/sections/${secNo}/assignments`);
             if (response.ok) {
                 const assignments = await response.json();
                 setAssignments(assignments);
@@ -44,7 +45,7 @@ function AssignmentsView(props) {
 
     const saveAssignment = async (assignment) => {
         try {
-            const response = await fetch(`${SERVER_URL}/assignments`, {
+            const response = await fetch(`${REGISTRAR_URL}/assignments`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,7 +67,7 @@ function AssignmentsView(props) {
     const deleteAssignment = async (assignmentId) => {
         console.log(assignmentId)
         try {
-            const response = await fetch(`${SERVER_URL}/assignments/${assignmentId}`, {
+            const response = await fetch(`${REGISTRAR_URL}/assignments/${assignmentId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
