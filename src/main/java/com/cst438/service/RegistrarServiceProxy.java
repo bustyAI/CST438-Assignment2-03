@@ -33,10 +33,25 @@ public class RegistrarServiceProxy {
     SectionRepository sectionRepository;
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     TermRepository termRepository;
 
     public void updateEnrollmentGrade(EnrollmentDTO enrollment) {
         sendMessage("updateEnrollment " + asJsonString(enrollment));
+    }
+
+    public void addAssignment(AssignmentDTO assignment){
+        sendMessage("addAssignment" + asJsonString(assignment));
+    }
+
+    public void updateAssignment(AssignmentDTO assignment){
+        sendMessage("updateAssignment" + asJsonString(assignment));
+    }
+
+    public void deleteAssignment(int assignmentId){
+        sendMessage("deleteAssignment" + assignmentId);
     }
 
 @RabbitListener(queues = "gradebook_service")
@@ -51,6 +66,12 @@ public void receiveFromRegistrar(String message) {
         handleSectionMessage(message);
     } catch (Exception e) {
         System.out.println("Exception in receiveFromRegistrar for section: " + e.getMessage());
+    }
+
+    try {
+        handleUserMessage(message);
+    } catch (Exception e) {
+        System.out.println("Exception in receiveFromRegistrar for user: " + e.getMessage());
     }
 }
 
@@ -106,10 +127,40 @@ private void handleSectionMessage(String message) {
         s.setTimes(dto.times());
         s.setInstructor_email(dto.instructorEmail());
         sectionRepository.save(s);
-    } else if (parts[0].equals("deleteSection")) {
-        sectionRepository.deleteById(parts[1]);
+    } else if  (parts[0].equals("deleteSection")) {
+        int sectionNoToDelete = Integer.parseInt(parts[1].trim());
+        sectionRepository.deleteById(sectionNoToDelete);
     }
 }
+
+private void handleUserMessage(String message) {
+    System.out.println("receive from Registrar for user: " + message);
+    String[] parts = message.split(" ", 2);
+    if (parts[0].equals("updateUser")) {
+        UserDTO dto = fromJsonString(parts[1], UserDTO.class);
+        User u = userRepository.findById(dto.id()).orElse(null);
+        if (u == null) {
+            System.out.println("Error receiveFromRegistrar User not found " + dto.id());
+        } else {
+            u.setName(dto.name());
+            u.setEmail(dto.email());
+            u.setType(dto.type());
+            userRepository.save(u);
+        }
+    } else if (parts[0].equals("addUser")) {
+        UserDTO dto = fromJsonString(parts[1], UserDTO.class);
+        User u = new User();
+        u.setName(dto.name());
+        u.setEmail(dto.email());
+        u.setType(dto.type());
+        userRepository.save(u);
+
+    } else if (parts[0].equals("deleteUser")){
+        int userToDelete = Integer.parseInt(parts[1].trim());
+        userRepository.deleteById(userToDelete);
+    }
+}
+
 
     private void sendMessage(String s) {
         System.out.println("Gradebook to Registar " + s);
