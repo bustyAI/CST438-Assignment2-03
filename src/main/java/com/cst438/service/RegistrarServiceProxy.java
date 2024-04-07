@@ -3,6 +3,7 @@ package com.cst438.service;
 import com.cst438.domain.*;
 import com.cst438.dto.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -131,10 +132,11 @@ private void handleSectionMessage(String message) {
 
     if (parts[0].equals("updateSection")) {
         SectionDTO dto = fromJsonString(parts[1], SectionDTO.class);
-        Section s = sectionRepository.findById(dto.secId()).orElse(null);
+        Section s = sectionRepository.findById(dto.secNo()).orElse(null);
         if (s == null) {
-            System.out.println("Error receiveFromRegistrar Section not found " + dto.secId());
+            System.out.println("Error receiveFromRegistrar Section not found " + dto.secNo());
         } else {
+            s.setSectionNo(dto.secNo());
             s.setSecId(dto.secId());
             s.setBuilding(dto.building());
             s.setRoom(dto.room());
@@ -146,6 +148,10 @@ private void handleSectionMessage(String message) {
         SectionDTO dto = fromJsonString(parts[1], SectionDTO.class);
         Term term = termRepository.findByYearAndSemester(dto.year(), dto.semester());
         Section s = new Section();
+        Course c = courseRepository.findById(dto.courseId()).orElse(null);
+
+        s.setSectionNo(dto.secNo());
+        s.setCourse(c);
         s.setTerm(term);
         s.setSecId(dto.secId());
         s.setBuilding(dto.building());
@@ -214,7 +220,16 @@ private void handleEnrollmentMessage(String message) {
         System.out.println("enrollmentId: " + enrollmentId);
 
         Enrollment e = enrollmentRepository.findById(enrollmentId).orElse(null);
-        List<Grade> grades = e.getGrades();
+        System.out.println("getEnrollmentId: " + e.getEnrollmentId());
+        Iterable<Grade> gradeRepo = gradeRepository.findAll();
+        List<Grade> grades = new ArrayList<>();
+        
+        for (Grade grade : gradeRepo){
+            if (grade.getEnrollment().getEnrollmentId() == e.getEnrollmentId()){
+                grades.add(grade);
+            }
+        }
+
         if (e != null){
             for (Grade grade : grades){
                 int tempId = grade.getGradeId();
