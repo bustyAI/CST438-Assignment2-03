@@ -38,7 +38,7 @@ const EnrollmentsView = (props) => {
 
     const saveGrade = async (enrollment) => {
         try {
-            const response = await fetch(`${GRADEBOOK_URL}/enrollments`,
+            const response = await fetch(`${REGISTRAR_URL}/enrollments`,
                 {
                     method: "PUT",
                     headers: {
