@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GradebookServiceProxy {
 
@@ -64,6 +66,7 @@ public class GradebookServiceProxy {
         sendMessage("dropEnrollment " + enrollmentId);
     }
     public void viewTranscript(int userId) { sendMessage("viewTranscript " + userId);}
+    public void viewSchedule(List<EnrollmentDTO> enrollments){ sendMessage("viewSchedule " + asJsonString(enrollments));}
     
     @RabbitListener(queues = "registrar_service")
     public void receiveFromGradebook(String message)  {

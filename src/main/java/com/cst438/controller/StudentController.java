@@ -117,6 +117,7 @@ public class StudentController {
                     enrollment.getSection().getTerm().getYear(),
                     enrollment.getSection().getTerm().getSemester()));
         }
+        gradebookService.viewSchedule(elist);
         return elist;
     }
 
