@@ -31,7 +31,7 @@ const AssignmentsStudentView = (props) => {
       try {
         // Student ID hardcoded as '3' for now, update later
         const response = await fetch(
-          `${REGISTRAR_URL}/assignments?studentId=${3}&year=${
+          `${GRADEBOOK_URL}/assignments?studentId=${3}&year=${
             search.year
           }&semester=${search.semester}`
         );
