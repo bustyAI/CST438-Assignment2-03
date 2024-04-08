@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.hibernate.grammars.hql.HqlParser.SecondContext;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -103,6 +106,12 @@ public void receiveFromRegistrar(String message) {
             handleTranscriptMessage(message);
         } catch (Exception e) {
             System.out.println("Exception in receiveFromRegistrar for transcript: " + e.getMessage());
+        }
+    } else if (functionName.contains("schedule")) {
+        try {
+            handelScheduleMessage(message);
+        } catch(Exception e) {
+            System.out.println("Exception in the receiveFromRegistrar for schedule: " + e.getMessage());
         }
     }
     }
@@ -251,7 +260,7 @@ private void handleEnrollmentMessage(String message) {
     }
 }
     private void handleTranscriptMessage(String message){
-        System.out.println("Receive from Registrar Service: " + message);
+        System.out.println("Receive from Registrar Service: " + "studentId: " +  message);
         String[] parts = message.split(" ", 2);
         if (parts[0].equals("viewTranscript")) {
             List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(Integer.parseInt(parts[1]));
@@ -277,7 +286,22 @@ private void handleEnrollmentMessage(String message) {
                                 '}');
                 }
             }
+        }
+    }
 
+    public void handelScheduleMessage(String message) throws JsonProcessingException {
+        System.out.println("Receive from Registrar Service: " + message);
+        String[] parts = message.split(" ", 2);
+        if (parts[0].equals("viewSchedule")) {
+            ObjectMapper mapper = new ObjectMapper();
+            List<EnrollmentDTO> enrollments = mapper.readValue(parts[1], new TypeReference<List<EnrollmentDTO>>() {});
+            if (enrollments == null) {
+                System.out.println("Error not registered in any classes ");
+            } else {
+                for (EnrollmentDTO enrollment: enrollments){
+                    System.out.println(enrollment);
+                }
+            }
         }
     }
 
