@@ -259,32 +259,16 @@ private void handleEnrollmentMessage(String message) {
         
     }
 }
-    private void handleTranscriptMessage(String message){
-        System.out.println("Receive from Registrar Service: " + "studentId: " +  message);
+    private void handleTranscriptMessage(String message) throws JsonProcessingException {
+        System.out.println("Receive from Registrar Service: " +  message);
         String[] parts = message.split(" ", 2);
         if (parts[0].equals("viewTranscript")) {
-            List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(Integer.parseInt(parts[1]));
+            ObjectMapper mapper = new ObjectMapper();
+            List<EnrollmentDTO> enrollments = mapper.readValue(parts[1], new TypeReference<List<EnrollmentDTO>>() {});
             if (enrollments == null) {
-                System.out.println("Error no enrollments for studentId: " + parts[1]);
+                System.out.println("Error no transcript for student");
             } else {
-                for (Enrollment enrollment: enrollments) {
-                        System.out.println("Enrollment{" +
-                                "enrollmentId=" + enrollment.getEnrollmentId() +
-                                ", grade='" + enrollment.getGrade() + '\'' +
-                                ", studentId=" + enrollment.getUser().getId() +
-                                ", name='" + enrollment.getUser().getName() + '\'' +
-                                ", email='" + enrollment.getUser().getEmail() + '\'' +
-                                ", courseId='" + enrollment.getSection().getCourse().getCourseId() + '\'' +
-                                ", sectionId=" + enrollment.getSection().getSecId() +
-                                ", sectionNo=" + enrollment.getSection().getSecId() +
-                                ", building='" + enrollment.getSection().getBuilding() + '\'' +
-                                ", room='" + enrollment.getSection().getRoom() + '\'' +
-                                ", times='" + enrollment.getSection().getTimes() + '\'' +
-                                ", credits=" + enrollment.getSection().getCourse().getCredits() +
-                                ", year=" + enrollment.getSection().getTerm().getYear() +
-                                ", semester='" + enrollment.getSection().getTerm().getSemester() + '\'' +
-                                '}');
-                }
+                System.out.println(enrollments);
             }
         }
     }
