@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 @Service
 public class RegistrarServiceProxy {
 
@@ -97,8 +98,14 @@ public void receiveFromRegistrar(String message) {
         } catch (Exception e) {
             System.out.println("Exception in receiveFromRegistrar for enrollment: " + e.getMessage());
         }
+    } else if (functionName.contains("transcript")){
+        try {
+            handleTranscriptMessage(message);
+        } catch (Exception e) {
+            System.out.println("Exception in receiveFromRegistrar for transcript: " + e.getMessage());
+        }
     }
-}
+    }
 
 private void handleCourseMessage(String message) {
     System.out.println("receive from Registrar for course: " + message);
@@ -241,8 +248,38 @@ private void handleEnrollmentMessage(String message) {
         }
         enrollmentRepository.delete(e);
         
-    } 
+    }
 }
+    private void handleTranscriptMessage(String message){
+        System.out.println("Receive from Registrar Service: " + message);
+        String[] parts = message.split(" ", 2);
+        if (parts[0].equals("viewTranscript")) {
+            List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(Integer.parseInt(parts[1]));
+            if (enrollments == null) {
+                System.out.println("Error no enrollments for studentId: " + parts[1]);
+            } else {
+                for (Enrollment enrollment: enrollments) {
+                        System.out.println("Enrollment{" +
+                                "enrollmentId=" + enrollment.getEnrollmentId() +
+                                ", grade='" + enrollment.getGrade() + '\'' +
+                                ", studentId=" + enrollment.getUser().getId() +
+                                ", name='" + enrollment.getUser().getName() + '\'' +
+                                ", email='" + enrollment.getUser().getEmail() + '\'' +
+                                ", courseId='" + enrollment.getSection().getCourse().getCourseId() + '\'' +
+                                ", sectionId=" + enrollment.getSection().getSecId() +
+                                ", sectionNo=" + enrollment.getSection().getSecId() +
+                                ", building='" + enrollment.getSection().getBuilding() + '\'' +
+                                ", room='" + enrollment.getSection().getRoom() + '\'' +
+                                ", times='" + enrollment.getSection().getTimes() + '\'' +
+                                ", credits=" + enrollment.getSection().getCourse().getCredits() +
+                                ", year=" + enrollment.getSection().getTerm().getYear() +
+                                ", semester='" + enrollment.getSection().getTerm().getSemester() + '\'' +
+                                '}');
+                }
+            }
+
+        }
+    }
 
     private void sendMessage(String s) {
         System.out.println("Gradebook to Registar " + s);
@@ -264,4 +301,6 @@ private void handleEnrollmentMessage(String message) {
             throw new RuntimeException(e);
         }
     }
+
+
 }
