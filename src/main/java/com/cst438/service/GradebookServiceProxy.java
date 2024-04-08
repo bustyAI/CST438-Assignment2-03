@@ -65,7 +65,7 @@ public class GradebookServiceProxy {
     public void dropCourse(int enrollmentId){
         sendMessage("dropEnrollment " + enrollmentId);
     }
-    public void viewTranscript(int userId) { sendMessage("viewTranscript " + userId);}
+    public void viewTranscript(List<EnrollmentDTO> enrollments) { sendMessage("viewTranscript " + asJsonString(enrollments));}
     public void viewSchedule(List<EnrollmentDTO> enrollments){ sendMessage("viewSchedule " + asJsonString(enrollments));}
     
     @RabbitListener(queues = "registrar_service")
