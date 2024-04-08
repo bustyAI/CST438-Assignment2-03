@@ -55,7 +55,7 @@ public class GradebookServiceProxy {
         sendMessage("updateUser " + asJsonString(user));
     }
     public void deleteUser(int userId){ 
-        sendMessage("deleteUser " + userId);
+        sendMessage("de leteUser " + userId);
     }
     public void enrollInCourse(EnrollmentDTO enrollment){
         sendMessage("addEnrollment "+ asJsonString(enrollment));
@@ -63,6 +63,7 @@ public class GradebookServiceProxy {
     public void dropCourse(int enrollmentId){
         sendMessage("dropEnrollment " + enrollmentId);
     }
+    public void viewTranscript(int userId) { sendMessage("viewTranscript " + userId);}
     
     @RabbitListener(queues = "registrar_service")
     public void receiveFromGradebook(String message)  {

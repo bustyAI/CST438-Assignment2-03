@@ -77,6 +77,7 @@ public class StudentController {
                     enrollment.getSection().getTerm().getYear(),
                     enrollment.getSection().getTerm().getSemester()));
         }
+        gradebookService.viewTranscript(studentId);
         return elist;
     }
 
