@@ -18,8 +18,11 @@ const Transcript = (props) => {
 
     const fetchTranscript = async () => {
         try {
-            // studentId=3 will be removed in assignment 7
-            const response = await fetch(`${SERVER_URL}/transcript?studentId=${3}`);
+            const jwt = sessionStorage.getItem('jwt');
+            const response = await fetch(`${SERVER_URL}/transcript`,
+            {headers: {
+              'Authorization': jwt,
+            }});
             if (response.ok) {
                 const data = await response.json();
                 getEnrollments(data);

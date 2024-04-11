@@ -6,9 +6,11 @@ import com.cst438.dto.SectionDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -39,16 +41,15 @@ public class StudentController {
     // studentId will be temporary until Login security is implemented
     // example URL /transcript?studentId=19803
     @GetMapping("/transcript")
-    public List<EnrollmentDTO> getTranscript(@RequestParam("studentId") int studentId) {
-        // TODO
-        // list course_id, sec_id, title, credit, grade in chronological order
-        // user must be a student
-        // hint: use enrollment repository method findEnrollmentByStudentIdOrderByTermId
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_STUDENT')")
+    public List<EnrollmentDTO> getTranscript(Principal principal) {
+        
+        User student = userRepository.findByEmail(principal.getName());
 
-        List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(studentId);
+        List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(student.getId());
         if (enrollments.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "No enrollments found for student Id: " + studentId);
+                    "No enrollments found for student Id: " + student.getId());
         }
         List<EnrollmentDTO> elist = new ArrayList<>();
         for (Enrollment enrollment : enrollments) {
