@@ -9,6 +9,7 @@ public record SectionDTO(
         int year,
         String semester,
         String courseId,
+        String title,
         int secId,
         String building,
         String room,
