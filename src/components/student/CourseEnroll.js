@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SERVER_URL } from "../../Constants";
+import { GRADEBOOK_URL } from "../../Constants";
 
 // // students displays a list of open sections for a
 // // use the URL /sections/open
@@ -20,7 +20,7 @@ const CourseEnroll = (props) => {
 
     const fetchOpenSections = async () => {
         try {
-            const response = await fetch(`${SERVER_URL}/sections/open`);
+            const response = await fetch(`${GRADEBOOK_URL}/sections/open`);
             if (response.ok) {
                 const data = await response.json();
                 setSections(data);
@@ -41,7 +41,7 @@ const CourseEnroll = (props) => {
         // studentId=3 will be removed in assignment 7
         try {
             const response = await fetch(
-                `${SERVER_URL}/enrollments/sections/${selectedSection.secNo}?studentId=${3}`,
+                `${GRADEBOOK_URL}/enrollments/sections/${selectedSection.secNo}?studentId=${3}`,
                 {
                     method: "POST",
                     headers: {
