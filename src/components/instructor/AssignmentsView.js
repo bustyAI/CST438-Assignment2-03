@@ -120,11 +120,11 @@ function AssignmentsView(props) {
                             <td>{a.courseId}</td>
                             <td>{a.secId}</td>
                             <td>{a.secNo}</td>
-                            <td><AssignmentUpdate assignment={a} onClose={fetchAssignments} save={saveAssignment} /></td>
+                            <td><AssignmentUpdate id={a.id + " edit"} assignment={a} state={a} onClose={fetchAssignments} save={saveAssignment} /></td>
                             <td>
-                                <Link to='/grades' state={a.id}>View Grades</Link>
+                                <Link to='/grades' id={a.id + " grades"} state={a.id}>View Grades</Link>
                             </td>
-                            <td><Button onClick={() => onDelete(a.id)}>Delete</Button></td>
+                            <td><Button id={a.id + " delete"} onClick={() => onDelete(a.id)}>Delete</Button></td>
                         </tr>
                     ))}
                 </tbody>

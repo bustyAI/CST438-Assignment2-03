@@ -66,14 +66,14 @@ const CourseEnroll = (props) => {
             <select onChange={(e) => setSelectedSection(JSON.parse(e.target.value))}>
                 <option value="">Select a Section</option>
                 {sections.map((section) => (
-                    <option key={section.secNo} value={JSON.stringify(section)}>
+                    <option id= {"section " + section.secNo} key={section.secNo} value={JSON.stringify(section)}>
                         {section.courseId} - Section {section.secNo}, {section.semester}{" "}
                         {section.year}
                     </option>
                 ))}
             </select>
             <br />
-            <button onClick={enrollStudent}>Enroll</button>
+            <button id= "enrollButton" onClick={enrollStudent}>Enroll</button>
         </>
     );
 };

@@ -63,10 +63,10 @@ const InstructorSectionsView = (props) => {
                             <td>{section.instructorName}</td>
                             <td>{section.instructorEmail}</td>
                             <td>
-                                <Link to='/enrollments' state={{ secNo: section.secNo, courseId: section.courseId, secId: section.secId }}>View Enrollments</Link>
+                                <Link to='/enrollments' id={section.secNo + "enrollments"} state={{ secNo: section.secNo, courseId: section.courseId, secId: section.secId }}>View Enrollments</Link>
                             </td>
                             <td>
-                                <Link to='/assignments' state={section.secNo}>View Assignments</Link>
+                                <Link to='/assignments' id={section.secNo + "assignments"} state={section.secNo}>View Assignments</Link>
                             </td>
                         </tr>
                     ))}
