@@ -15,7 +15,11 @@ function UsersView(props) {
 
     const  fetchUsers = async () => {
       try {
-        const response = await fetch(`${SERVER_URL}/users`);
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/users`,
+        {headers: {
+          'Authorization': jwt,
+        }});
         if (response.ok) {
           const users = await response.json();
           setUsers(users);
@@ -34,10 +38,12 @@ function UsersView(props) {
 
     const saveUser = async (user) => {
       try {
+        const jwt = sessionStorage.getItem('jwt');
         const response = await fetch(`${SERVER_URL}/users`,
           {
             method: 'PUT',
             headers: {
+              'Authorization': jwt,
               'Content-Type': 'application/json',
             }, 
             body: JSON.stringify(user),
@@ -56,10 +62,12 @@ function UsersView(props) {
 
     const addUser = async (user) => {
       try {
+        const jwt = sessionStorage.getItem('jwt');
         const response = await  fetch(`${SERVER_URL}/users`,
           {
             method: 'POST',
             headers: {
+              'Authorization': jwt,
               'Content-Type': 'application/json',
             }, 
             body: JSON.stringify(user),
@@ -79,10 +87,12 @@ function UsersView(props) {
 
     const deleteUser = async (id) => {
       try {
+        const jwt = sessionStorage.getItem('jwt');
         const response = await fetch(`${SERVER_URL}/users/${id}`,
           {
             method: 'DELETE',
             headers: {
+              'Authorization': jwt,
               'Content-Type': 'application/json',
             }, 
           });

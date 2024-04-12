@@ -194,7 +194,7 @@ public class SectionController {
     public List<SectionDTO> getOpenSectionsForEnrollment() {
 
         List<Section> sections = sectionRepository.findByOpenOrderByCourseIdSectionId();
-
+        System.out.println("Sections: " + sections);
         List<SectionDTO> dlist = new ArrayList<>();
         for (Section s : sections) {
             User instructor = userRepository.findByEmail(s.getInstructorEmail());
@@ -212,6 +212,7 @@ public class SectionController {
                     (instructor!=null) ? instructor.getEmail() : ""
             ));
         }
+        System.out.println(dlist);
         return dlist;
     }
 }

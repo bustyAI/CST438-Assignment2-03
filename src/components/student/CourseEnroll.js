@@ -20,13 +20,19 @@ const CourseEnroll = (props) => {
 
     const fetchOpenSections = async () => {
         try {
-            const response = await fetch(`${SERVER_URL}/sections/open`);
+            const jwt = sessionStorage.getItem('jwt');
+            const response = await fetch(`${SERVER_URL}/sections/open`,
+            {headers: {
+              'Authorization': jwt,
+            }});
             if (response.ok) {
                 const data = await response.json();
                 setSections(data);
+                console.log(data);
             } else {
                 console.error("Failed to fetch open sections:", response.statusText);
             }
+            
         } catch (error) {
             console.error("Error while fetching open sections:", error);
         }
@@ -38,13 +44,14 @@ const CourseEnroll = (props) => {
             return;
         }
 
-        // studentId=3 will be removed in assignment 7
         try {
+            const jwt = sessionStorage.getItem('jwt');
             const response = await fetch(
                 `${SERVER_URL}/enrollments/sections/${selectedSection.secNo}?studentId=${3}`,
                 {
                     method: "POST",
                     headers: {
+                        'Authorization': jwt,
                         "Content-Type": "application/json",
                     },
                 }
