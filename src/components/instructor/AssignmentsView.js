@@ -25,7 +25,11 @@ function AssignmentsView(props) {
 
     const fetchAssignments = async (secNo) => {
         try {
-            const response = await fetch(`${SERVER_URL}/sections/${secNo}/assignments`);
+            const jwt = sessionStorage.getItem('jwt');
+            const response = await fetch(`${SERVER_URL}/sections/${secNo}/assignments`,
+            {headers: {
+              'Authorization': jwt,
+            }});
             if (response.ok) {
                 const assignments = await response.json();
                 setAssignments(assignments);
@@ -42,11 +46,37 @@ function AssignmentsView(props) {
         fetchAssignments(sectionNo);
     }, []);
 
-    const saveAssignment = async (assignment) => {
+    const addAssignment = async (assignment) => {
         try {
+            const jwt = sessionStorage.getItem('jwt');
+            const response = await fetch(`${SERVER_URL}/assignments`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': jwt,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(assignment),
+            });
+            if (response.ok) {
+                setMessage("Assignment added successfully");
+                fetchAssignments(sectionNo);
+            } else {
+                const rc = await response.json();
+                setMessage(rc.message);
+            }
+        } catch (err) {
+            setMessage("Network error: " + err);
+        }
+    }
+
+    const updateAssignment = async (assignment) => {
+        console.log("view ", assignment);
+        try {
+            const jwt = sessionStorage.getItem('jwt');
             const response = await fetch(`${SERVER_URL}/assignments`, {
                 method: 'PUT',
                 headers: {
+                    'Authorization': jwt,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(assignment),
@@ -64,11 +94,12 @@ function AssignmentsView(props) {
     }
 
     const deleteAssignment = async (assignmentId) => {
-        console.log(assignmentId)
         try {
+            const jwt = sessionStorage.getItem('jwt');
             const response = await fetch(`${SERVER_URL}/assignments/${assignmentId}`, {
                 method: 'DELETE',
                 headers: {
+                    'Authorization': jwt,
                     'Content-Type': 'application/json',
                 },
             });
@@ -85,7 +116,6 @@ function AssignmentsView(props) {
     }
 
     const onDelete = (assignmentId) => {
-        console.log(assignmentId)
         confirmAlert({
             title: 'Confirm to delete',
             message: 'Do you really want to delete?',
@@ -120,7 +150,7 @@ function AssignmentsView(props) {
                             <td>{a.courseId}</td>
                             <td>{a.secId}</td>
                             <td>{a.secNo}</td>
-                            <td><AssignmentUpdate id={a.id + " edit"} assignment={a} state={a} onClose={fetchAssignments} save={saveAssignment} /></td>
+                            <td><AssignmentUpdate id={a.id + " edit"} assignment={a} state={a} onClose={fetchAssignments} update={updateAssignment} /></td>
                             <td>
                                 <Link to='/grades' id={a.id + " grades"} state={a.id}>View Grades</Link>
                             </td>
@@ -129,7 +159,7 @@ function AssignmentsView(props) {
                     ))}
                 </tbody>
             </table>
-            <AssignmentAdd onClose={fetchAssignments} />
+            <AssignmentAdd add={addAssignment} />
         </div>
     );
 }

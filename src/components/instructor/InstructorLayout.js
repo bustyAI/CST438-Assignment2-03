@@ -6,6 +6,7 @@ import InstructorHome from './InstructorHome';
 import EnrollmentsView from './EnrollmentsView';
 import InstructorSectionsView from './InstructorSectionsView';
 import AssignmentsView from './AssignmentsView';
+import AssignmentGrade from './AssignmentGrade.js';
 
 
 export const InstructorRouter = (props) => {
@@ -18,6 +19,7 @@ export const InstructorRouter = (props) => {
           <Route path="assignments" element={<AssignmentsView />} />
           <Route path="enrollments" element={<EnrollmentsView />} />
           <Route path="sections" element={<InstructorSectionsView />} />
+          <Route path="grades" element={<AssignmentGrade />} />
           <Route path="logout" element={<Logout logout={props.logout}/>} />
         </Route>
       </Routes>

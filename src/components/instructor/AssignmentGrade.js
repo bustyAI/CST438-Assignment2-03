@@ -19,11 +19,14 @@ const AssignmentGrade = (props) => {
 
     const location = useLocation();
     const assignment = location.state;
-    console.log(assignment);
 
     const fetchGrades = async (aId) => {
         try {
-            const response = await fetch(`${SERVER_URL}/assignments/${aId}/grades`);
+            const jwt = sessionStorage.getItem('jwt');
+            const response = await fetch(`${SERVER_URL}/assignments/${aId}/grades`,
+            {headers: {
+              'Authorization': jwt,
+            }});
             if (response.ok) {
                 const grades = await response.json();
                 setGrades(grades);
@@ -42,9 +45,11 @@ const AssignmentGrade = (props) => {
 
     const saveGrade = async (grade) => {
         try {
+            const jwt = sessionStorage.getItem('jwt');
             const response = await fetch(`${SERVER_URL}/grades`, {
                 method: 'PUT',
                 headers: {
+                    'Authorization': jwt,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(grade),

@@ -26,7 +26,7 @@ const AssignmentUpdate = (props) => {
 
   const editClose = () => {
     setOpen(false);
-    setAssignment({ id: '', title: '', dueDate: '', courseId: '', secId: '', secNo: '' })
+    setAssignment({ id: '', title: '', dueDate: '', courseId: '', secId: '', secNo: '' });
   }
 
   const editChange = (event) => {
@@ -45,28 +45,8 @@ const AssignmentUpdate = (props) => {
     } else if (! /^\d+$/.test(assignment.secNo)) {
       setEditMessage("SecNo must be an integer")
     } else {
-      saveAssignment(assignment);
-    }
-  }
-
-  const saveAssignment = async (assignment) => {
-    try {
-      const response = await fetch (`${SERVER_URL}/assignments`, 
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          }, 
-          body: JSON.stringify(assignment),
-        });
-      if (response.ok) {
-        setEditMessage("assignment saved");
-      } else {
-        const rc = await response.json();
-        setEditMessage(rc.message);
-      }
-    } catch (err) {
-      setEditMessage("network error: "+err);
+      props.update(assignment);
+      setEditMessage("assignment saved");
     }
   }
 

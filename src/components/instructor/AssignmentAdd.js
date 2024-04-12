@@ -29,7 +29,6 @@ const AssignmentAdd = (props) => {
 
     const editClose = () => {
         setOpen(false);
-        props.onClose(assignment.secNo);
     };
 
     const editChange = (event) => {
@@ -41,29 +40,12 @@ const AssignmentAdd = (props) => {
             setEditMessage('Must enter data for title and dudDate');
         } else {
             assignment.secNo = a
-            addAssignment(assignment);
+            //addAssignment(assignment);
+            props.add(assignment);
+            setEditMessage("assignment saved");
         }
     }
 
-    const addAssignment = async (assignment) => {
-        try {
-            const response = await fetch(`${SERVER_URL}/assignments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(assignment),
-            });
-            if (response.ok) {
-                setEditMessage("Assignment added successfully");
-            } else {
-                const rc = await response.json();
-                setEditMessage(rc.message);
-            }
-        } catch (err) {
-            setEditMessage("Network error: " + err);
-        }
-    }
     return (
         <div>
             <Button id="addAssignment" onClick={editOpen}>Add Assignment</Button>
