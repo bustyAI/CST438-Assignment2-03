@@ -29,11 +29,15 @@ const AssignmentsStudentView = (props) => {
       setMessage("Enter search parameters");
     } else {
       try {
-        // Student ID hardcoded as '3' for now, update later
+        const jwt = sessionStorage.getItem('jwt');
         const response = await fetch(
-          `${SERVER_URL}/assignments?studentId=${3}&year=${
-            search.year
-          }&semester=${search.semester}`
+          `${SERVER_URL}/assignments?year=${search.year
+          }&semester=${search.semester}`,
+          {
+            headers: {
+              'Authorization': jwt,
+            }
+          }
         );
         if (response.ok) {
           const data = await response.json();
@@ -104,7 +108,7 @@ const AssignmentsStudentView = (props) => {
         </thead>
         <tbody>
           {assignments.map((a) => (
-            <tr key={a.courseId}>
+            <tr key={a.id}>
               <td>{a.courseId}</td>
               <td>{a.title}</td>
               <td>{a.dueDate}</td>

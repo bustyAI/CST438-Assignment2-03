@@ -5,10 +5,12 @@ import com.cst438.dto.AssignmentDTO;
 import com.cst438.dto.AssignmentStudentDTO;
 import com.cst438.dto.GradeDTO;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -192,12 +194,14 @@ public class AssignmentController {
     // student lists their assignments/grades for an enrollment ordered by due date
     // student must be enrolled in the section
     @GetMapping("/assignments")
-    public List<AssignmentStudentDTO> getStudentAssignments(
-            @RequestParam("studentId") int studentId,
-            @RequestParam("year") int year,
-            @RequestParam("semester") String semester) {
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_STUDENT')")
+    public List<AssignmentStudentDTO> getStudentAssignments(Principal principal,
+                                                            @RequestParam("year") int year,
+                                                            @RequestParam("semester") String semester) {
 
-        List<Assignment> assignments = assignmentRepository.findByStudentIdAndYearAndSemesterOrderByDueDate(studentId,
+        User student = userRepository.findByEmail(principal.getName());
+
+        List<Assignment> assignments = assignmentRepository.findByStudentIdAndYearAndSemesterOrderByDueDate(student.getId(),
                 year, semester);
         List<AssignmentStudentDTO> dto_list = new ArrayList<>();
 
@@ -206,7 +210,7 @@ public class AssignmentController {
         }
 
         for (Assignment a : assignments) {
-            Enrollment enrollment = enrollmentRepository.findEnrollmentBySectionNoAndStudentId(a.getSection().getSectionNo(), studentId);
+            Enrollment enrollment = enrollmentRepository.findEnrollmentBySectionNoAndStudentId(a.getSection().getSectionNo(), student.getId());
             // only getting sections student is enrolled in
             if (enrollment == null) {
                 continue;
