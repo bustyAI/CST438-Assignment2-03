@@ -22,9 +22,11 @@ const CourseEnroll = (props) => {
         try {
             const jwt = sessionStorage.getItem('jwt');
             const response = await fetch(`${SERVER_URL}/sections/open`,
-            {headers: {
-              'Authorization': jwt,
-            }});
+                {
+                    headers: {
+                        'Authorization': jwt,
+                    }
+                });
             if (response.ok) {
                 const data = await response.json();
                 setSections(data);
@@ -32,7 +34,7 @@ const CourseEnroll = (props) => {
             } else {
                 console.error("Failed to fetch open sections:", response.statusText);
             }
-            
+
         } catch (error) {
             console.error("Error while fetching open sections:", error);
         }
@@ -47,7 +49,7 @@ const CourseEnroll = (props) => {
         try {
             const jwt = sessionStorage.getItem('jwt');
             const response = await fetch(
-                `${SERVER_URL}/enrollments/sections/${selectedSection.secNo}?studentId=${3}`,
+                `${SERVER_URL}/enrollments/sections/${selectedSection.secNo}`,
                 {
                     method: "POST",
                     headers: {
@@ -73,14 +75,14 @@ const CourseEnroll = (props) => {
             <select onChange={(e) => setSelectedSection(JSON.parse(e.target.value))}>
                 <option value="">Select a Section</option>
                 {sections.map((section) => (
-                    <option id= {"section " + section.secNo} key={section.secNo} value={JSON.stringify(section)}>
+                    <option id={"section " + section.secNo} key={section.secNo} value={JSON.stringify(section)}>
                         {section.courseId} - Section {section.secNo}, {section.semester}{" "}
                         {section.year}
                     </option>
                 ))}
             </select>
             <br />
-            <button id= "enrollButton" onClick={enrollStudent}>Enroll</button>
+            <button id="enrollButton" onClick={enrollStudent}>Enroll</button>
         </>
     );
 };
