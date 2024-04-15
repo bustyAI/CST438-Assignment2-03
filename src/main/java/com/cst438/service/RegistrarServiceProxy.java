@@ -101,19 +101,7 @@ public void receiveFromRegistrar(String message) {
         } catch (Exception e) {
             System.out.println("Exception in receiveFromRegistrar for enrollment: " + e.getMessage());
         }
-    } else if (functionName.contains("transcript")){
-        try {
-            handleTranscriptMessage(message);
-        } catch (Exception e) {
-            System.out.println("Exception in receiveFromRegistrar for transcript: " + e.getMessage());
-        }
-    } else if (functionName.contains("schedule")) {
-        try {
-            handelScheduleMessage(message);
-        } catch(Exception e) {
-            System.out.println("Exception in the receiveFromRegistrar for schedule: " + e.getMessage());
-        }
-    }
+    } 
     }
 
 private void handleCourseMessage(String message) {
@@ -259,35 +247,6 @@ private void handleEnrollmentMessage(String message) {
         
     }
 }
-    private void handleTranscriptMessage(String message) throws JsonProcessingException {
-        System.out.println("Receive from Registrar Service: " +  message);
-        String[] parts = message.split(" ", 2);
-        if (parts[0].equals("viewTranscript")) {
-            ObjectMapper mapper = new ObjectMapper();
-            List<EnrollmentDTO> enrollments = mapper.readValue(parts[1], new TypeReference<List<EnrollmentDTO>>() {});
-            if (enrollments == null) {
-                System.out.println("Error no transcript for student");
-            } else {
-                System.out.println(enrollments);
-            }
-        }
-    }
-
-    public void handelScheduleMessage(String message) throws JsonProcessingException {
-        System.out.println("Receive from Registrar Service: " + message);
-        String[] parts = message.split(" ", 2);
-        if (parts[0].equals("viewSchedule")) {
-            ObjectMapper mapper = new ObjectMapper();
-            List<EnrollmentDTO> enrollments = mapper.readValue(parts[1], new TypeReference<List<EnrollmentDTO>>() {});
-            if (enrollments == null) {
-                System.out.println("Error not registered in any classes ");
-            } else {
-                for (EnrollmentDTO enrollment: enrollments){
-                    System.out.println(enrollment);
-                }
-            }
-        }
-    }
 
     private void sendMessage(String s) {
         System.out.println("Gradebook to Registar " + s);
