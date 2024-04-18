@@ -3,6 +3,8 @@ package com.cst438.controller;
 import com.cst438.domain.*;
 import com.cst438.dto.CourseDTO;
 import com.cst438.dto.SectionDTO;
+import com.cst438.service.GradebookServiceProxy;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +36,9 @@ public class CourseController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    GradebookServiceProxy gradebookService;
+
 
     // ADMIN function to create a new course
     @PostMapping("/courses")
@@ -43,11 +48,13 @@ public class CourseController {
         c.setTitle(course.title());
         c.setCourseId(course.courseId());
         courseRepository.save(c);
-        return new CourseDTO(
+        CourseDTO courseDTO = new CourseDTO(
                 c.getCourseId(),
                 c.getTitle(),
                 c.getCredits()
         );
+        gradebookService.addCourse(courseDTO);
+        return courseDTO;
     }
 
     // ADMIN function to update a course
@@ -60,11 +67,13 @@ public class CourseController {
             c.setTitle(course.title());
             c.setCredits(course.credits());
             courseRepository.save(c);
-            return new CourseDTO(
+            CourseDTO courseDTO = new CourseDTO(
                     c.getCourseId(),
                     c.getTitle(),
                     c.getCredits()
             );
+        gradebookService.updateCourse(courseDTO);
+        return courseDTO;
         }
     }
 
@@ -76,6 +85,7 @@ public class CourseController {
         // if course does not exist, do nothing.
         if (c!=null) {
             courseRepository.delete(c);
+            gradebookService.deleteCourse(courseid);
         }
     }
 

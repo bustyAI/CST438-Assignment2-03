@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { SERVER_URL } from '../../Constants';
+import { REGISTRAR_URL } from '../../Constants';
 import { Button } from '@mui/material';
-
+import { GRADEBOOK_URL } from '../../Constants';
 // instructor view list of students enrolled in a section 
 // use location to get section no passed from InstructorSectionsView
 // fetch the enrollments using URL /sections/{secNo}/enrollments
@@ -22,7 +22,7 @@ const EnrollmentsView = (props) => {
 
     const fetchEnrollments = async (secNo) => {
         try {
-            const response = await fetch(`${SERVER_URL}/sections/${secNo}/enrollments`);
+            const response = await fetch(`${REGISTRAR_URL}/sections/${secNo}/enrollments`);
             if (response.ok) {
                 const students = await response.json();
                 console.log(students);
@@ -38,7 +38,7 @@ const EnrollmentsView = (props) => {
 
     const saveGrade = async (enrollment) => {
         try {
-            const response = await fetch(`${SERVER_URL}/enrollments`,
+            const response = await fetch(`${REGISTRAR_URL}/enrollments`,
                 {
                     method: "PUT",
                     headers: {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom'
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import { SERVER_URL } from '../../Constants';
+import { REGISTRAR_URL } from '../../Constants';
 import { Outlet, Link } from "react-router-dom";
-
+import { GRADEBOOK_URL } from '../../Constants';
 // instructor enters students' grades for an assignment
 // fetch the grades using the URL /assignments/{id}/grades
 // REST api returns a list of GradeDTO objects
@@ -23,7 +23,7 @@ const AssignmentGrade = (props) => {
 
     const fetchGrades = async (aId) => {
         try {
-            const response = await fetch(`${SERVER_URL}/assignments/${aId}/grades`);
+            const response = await fetch(`${REGISTRAR_URL}/assignments/${aId}/grades`);
             if (response.ok) {
                 const grades = await response.json();
                 setGrades(grades);
@@ -42,7 +42,7 @@ const AssignmentGrade = (props) => {
 
     const saveGrade = async (grade) => {
         try {
-            const response = await fetch(`${SERVER_URL}/grades`, {
+            const response = await fetch(`${REGISTRAR_URL}/grades`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

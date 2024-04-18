@@ -3,6 +3,7 @@ package com.cst438.controller;
 import com.cst438.domain.*;
 import com.cst438.dto.EnrollmentDTO;
 import com.cst438.dto.SectionDTO;
+import com.cst438.service.GradebookServiceProxy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,8 @@ public class StudentController {
     @Autowired
     EnrollmentRepository enrollmentRepository;
 
-    @Autowired
-    GradeRepository gradeRepository;
+//    @Autowired
+//    GradeRepository gradeRepository;
 
     @Autowired
     TermRepository termRepository;
@@ -34,6 +35,9 @@ public class StudentController {
 
     @Autowired
     SectionRepository sectionRepository;
+
+    @Autowired
+    GradebookServiceProxy gradebookService;
 
     // student gets transcript showing list of all enrollments
     // studentId will be temporary until Login security is implemented
@@ -159,7 +163,7 @@ public class StudentController {
 
         enrollmentRepository.save(enrollment);
 
-        return new EnrollmentDTO(
+        EnrollmentDTO eDTO = new EnrollmentDTO(
                 enrollment.getEnrollmentId(),
                 null,
                 studentId,
@@ -174,37 +178,32 @@ public class StudentController {
                 section.getCourse().getCredits(),
                 section.getTerm().getYear(),
                 section.getTerm().getSemester());
+        gradebookService.enrollInCourse(eDTO);
+        return eDTO;
 
     }
 
     // student drops a course
     // user must be student
-    @DeleteMapping("/enrollments/{enrollmentId}")
-    public void dropCourse(@PathVariable("enrollmentId") int enrollmentId) {
-        // TODO
-        // check that today is not after the dropDeadline for section
+   @DeleteMapping("/enrollments/{enrollmentId}")
+   public void dropCourse(@PathVariable("enrollmentId") int enrollmentId) {
+       // TODO
+       // check that today is not after the dropDeadline for section
 
-        Enrollment e = enrollmentRepository.findById(enrollmentId).orElse(null);
-        List<Grade> grades = e.getGrades();
+       Enrollment e = enrollmentRepository.findById(enrollmentId).orElse(null);       
 
-        if (e != null) {
-            LocalDate localDate = LocalDate.now();
-            Date today = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            Date dropDeadline = e.getSection().getTerm().getDropDeadline();
-            if (!today.after(dropDeadline)) {
-                for (Grade grade : grades){
-                    int tempId = grade.getGradeId();
-                    Grade tempGrade = gradeRepository.findById(tempId).orElse(null);
-                    if (tempGrade != null){
-                        gradeRepository.delete(tempGrade);
-                    }
-                }
+       if (e != null) {
+           LocalDate localDate = LocalDate.now();
+           Date today = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+           Date dropDeadline = e.getSection().getTerm().getDropDeadline();
+           if (!today.after(dropDeadline)) {
+                gradebookService.dropCourse(enrollmentId);
                 enrollmentRepository.delete(e);
-            } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "drop deadline has passed");
-            }
-        } else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "enrollment not found");
-        }
-    }
+           } else {
+               throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "drop deadline has passed");
+           }
+       } else{
+           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "enrollment not found");
+       }
+   }
 }

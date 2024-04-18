@@ -20,8 +20,8 @@ public class Enrollment {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @OneToMany(mappedBy = "enrollment")
-    List<Grade> grades;
+//    @OneToMany(mappedBy = "enrollment")
+//    List<Grade> grades;
 
 
     public int getEnrollmentId() {
@@ -40,13 +40,13 @@ public class Enrollment {
         this.grade = grade;
     }
 
-    public List<Grade> getGrades() {
-        return grades;
-    }
+//    public List<Grade> getGrades() {
+//        return grades;
+//    }
 
-    public void setGrades(List<Grade> grades) {
-        this.grades = grades;
-    }
+//    public void setGrades(List<Grade> grades) {
+//        this.grades = grades;
+//    }
 
     public User getUser() {
         return user;
