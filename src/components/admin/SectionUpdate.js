@@ -5,8 +5,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import {SERVER_URL} from '../../Constants';
-
+import { GRADEBOOK_URL } from "../../Constants";
 const SectionUpdate = (props)  => {
 
     const [open, setOpen] = useState(false);
@@ -41,7 +40,7 @@ const SectionUpdate = (props)  => {
 
     const saveSection = async (section) => {
         try {
-          const response = await fetch (`${SERVER_URL}/sections`, 
+          const response = await fetch (`${GRADEBOOK_URL}/sections`, 
             {
               method: 'PUT',
               headers: {

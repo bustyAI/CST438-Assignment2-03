@@ -4,6 +4,8 @@ import com.cst438.domain.*;
 import com.cst438.dto.AssignmentDTO;
 import com.cst438.dto.AssignmentStudentDTO;
 import com.cst438.dto.GradeDTO;
+import com.cst438.dto.SectionDTO;
+import com.cst438.service.RegistrarServiceProxy;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,9 @@ public class AssignmentController {
     GradeRepository gradeRepository;
     @Autowired
     EnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    RegistrarServiceProxy registrarService;
 
 
     // instructor lists assignments for a section.  Assignments ordered by due date.
@@ -79,9 +84,11 @@ public class AssignmentController {
 
         assignmentRepository.save(assignment);
 
-        return new AssignmentDTO(assignment.getAssignmentId(), assignment.getTitle(), assignment.getDueDate(),
-                assignment.getSection().getCourse().getCourseId(), assignment.getSection().getSecId(),
-                assignment.getSection().getSectionNo());
+        AssignmentDTO aDto = new AssignmentDTO(assignment.getAssignmentId(), assignment.getTitle(), assignment.getDueDate(),
+        assignment.getSection().getCourse().getCourseId(), assignment.getSection().getSecId(),
+        assignment.getSection().getSectionNo());
+        registrarService.addAssignment(aDto);
+        return aDto;
     }
 
     // update assignment for a section.  Only title and dueDate may be changed.
@@ -104,9 +111,12 @@ public class AssignmentController {
             assignment.setDueDate(dto.dueDate());
             assignmentRepository.save(assignment);
         }
-        return new AssignmentDTO(assignment.getAssignmentId(), assignment.getTitle(), assignment.getDueDate(),
-                assignment.getSection().getCourse().getCourseId(), assignment.getSection().getSecId(),
-                assignment.getSection().getSectionNo());
+        AssignmentDTO aDto = new AssignmentDTO(assignment.getAssignmentId(), assignment.getTitle(), assignment.getDueDate(),
+        assignment.getSection().getCourse().getCourseId(), assignment.getSection().getSecId(),
+        assignment.getSection().getSectionNo());
+        registrarService.updateAssignment(aDto);
+        return aDto;
+
     }
 
     // delete assignment for a section
@@ -130,6 +140,7 @@ public class AssignmentController {
                 }
             }
             
+            registrarService.deleteAssignment(assignmentId);
             assignmentRepository.delete(assignment);
         }
     }
@@ -223,4 +234,38 @@ public class AssignmentController {
 
         return dto_list;
     }
+
+    // get Sections for an instructor
+    // example URL  /sections?instructorEmail=dwisneski@csumb.edu&year=2024&semester=Spring
+    @GetMapping("/sections")
+    public List<SectionDTO> getSectionsForInstructor(
+            @RequestParam("email") String instructorEmail,
+            @RequestParam("year") int year ,
+            @RequestParam("semester") String semester )  {
+
+
+        List<Section> sections = sectionRepository.findByInstructorEmailAndYearAndSemester(instructorEmail, year, semester);
+
+        List<SectionDTO> dto_list = new ArrayList<>();
+        for (Section s : sections) {
+            User instructor = null;
+            if (s.getInstructorEmail()!=null) {
+                instructor = userRepository.findByEmail(s.getInstructorEmail());
+            }
+            dto_list.add(new SectionDTO(
+                    s.getSectionNo(),
+                    s.getTerm().getYear(),
+                    s.getTerm().getSemester(),
+                    s.getCourse().getCourseId(),
+                    s.getSecId(),
+                    s.getBuilding(),
+                    s.getRoom(),
+                    s.getTimes(),
+                    (instructor!=null) ? instructor.getName() : "",
+                    (instructor!=null) ? instructor.getEmail() : ""
+            ));
+        }
+        return dto_list;
+    }
+
 }

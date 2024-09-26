@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
-import { SERVER_URL } from "../../Constants";
+import { GRADEBOOK_URL } from "../../Constants";
 
 // student views a list of assignments and assignment grades
 // use the URL  /assignments?studentId= &year= &semester=
@@ -31,7 +31,7 @@ const AssignmentsStudentView = (props) => {
       try {
         // Student ID hardcoded as '3' for now, update later
         const response = await fetch(
-          `${SERVER_URL}/assignments?studentId=${3}&year=${
+          `${GRADEBOOK_URL}/assignments?studentId=${3}&year=${
             search.year
           }&semester=${search.semester}`
         );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
-import { SERVER_URL } from '../../Constants';
+import { GRADEBOOK_URL } from '../../Constants';
 
 // student can view schedule of sections 
 // use the URL /enrollment?studentId=3&year= &semester=
@@ -27,7 +27,7 @@ const ScheduleView = () => {
     
     const fetchEnrollments = async () => {
       try {
-        const response = await fetch(`${SERVER_URL}/enrollments?studentId=3&year=${search.year}&semester=${search.semester}`);
+        const response = await fetch(`${GRADEBOOK_URL}/enrollments?studentId=3&year=${search.year}&semester=${search.semester}`);
         if (response.ok) {
           const data = await response.json();
           setEnrollments(data);
@@ -43,7 +43,7 @@ const ScheduleView = () => {
     const dropEnrollment = async (enrollmentId) => {
         console.log(enrollmentId)
         try {
-            const response = await fetch(`${SERVER_URL}/enrollments/${enrollmentId}`, {
+            const response = await fetch(`${GRADEBOOK_URL}/enrollments/${enrollmentId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
